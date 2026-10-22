@@ -93,6 +93,13 @@ h1, h2, h3, h4 { color: var(--primary-dark); font-weight: 600; margin: 0 0 .5rem
 
 .sidebar__nav--admin { flex: 0 0 auto; }
 
+.sidebar__link--export {
+    margin-top: .35rem;
+    background: rgba(39, 190, 223, 0.18);
+    color: var(--white);
+}
+.sidebar__link--export svg { width: 18px; height: 18px; flex: 0 0 auto; }
+
 .sidebar__divider {
     border-top: 1px solid rgba(255, 255, 255, 0.15);
     margin: 0 0 .75rem;

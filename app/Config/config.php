@@ -11,6 +11,7 @@ return [
         'env' => Env::get('APP_ENV', 'production'),
         'debug' => filter_var(Env::get('APP_DEBUG', false), FILTER_VALIDATE_BOOLEAN),
         'key' => Env::get('APP_KEY', ''),
+        'timezone' => Env::get('APP_TIMEZONE', 'America/Sao_Paulo'),
     ],
     'db' => [
         'host' => Env::get('DB_HOST', '127.0.0.1'),

@@ -101,6 +101,14 @@ A tela de **Acessos FTP** (`/ftp`) mantém host, usuário e senha por cliente
 em texto puro sob demanda (botão "Mostrar"/"Copiar"), via requisição
 autenticada e protegida por token CSRF.
 
+## Exportação para Excel
+
+Administradores têm o botão **Exportar Excel** no menu lateral (`/exportar/excel`).
+Ele baixa uma planilha `.xlsx` com uma aba por tela (Resumo, Clientes, Acessos
+FTP, Blogs, WordPress e E-commerce), com cabeçalhos coloridos, filtros e status
+destacados. **A planilha inclui todas as senhas em texto puro**: trate o arquivo
+como confidencial.
+
 ## Segurança
 
 - Login por nome de usuário; senha em bcrypt (hash irreversível).

@@ -4,6 +4,8 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 
 $config = require dirname(__DIR__) . '/app/Config/config.php';
 
+date_default_timezone_set($config['app']['timezone']);
+
 if ($config['app']['debug']) {
     ini_set('display_errors', '1');
     error_reporting(E_ALL);
@@ -52,6 +54,7 @@ use App\Controllers\AuthController;
 use App\Controllers\BlogController;
 use App\Controllers\ClienteController;
 use App\Controllers\EcommerceController;
+use App\Controllers\ExportController;
 use App\Controllers\FtpAccountController;
 use App\Controllers\UserController;
 use App\Controllers\WordpressController;
@@ -102,6 +105,8 @@ $router->get('/clientes/{id}/edit', [ClienteController::class, 'edit']);
 // Antes de /clientes/{id}: o padrão {id} também casaria com "limites".
 $router->post('/clientes/limites', [ClienteController::class, 'updateLimites']);
 $router->post('/clientes/{id}', [ClienteController::class, 'update']);
+
+$router->get('/exportar/excel', [ExportController::class, 'excel']);
 
 $router->get('/usuarios', [UserController::class, 'index']);
 $router->get('/usuarios/create', [UserController::class, 'create']);
