@@ -88,6 +88,10 @@ Cada cliente tem datas de última e próxima reunião. A tela de **Clientes**
 - **moderado**: entre 2 e 4 meses
 - **crítico**: mais de 4 meses, ou sem nenhuma reunião registrada
 
+Os limites acima (2 e 4 meses) são o padrão. Administradores podem alterá-los
+em **Ajustar critérios**, na própria tela de Clientes; os valores ficam na
+tabela `configuracoes` e valem para todos os usuários.
+
 A listagem permite buscar por nome e filtrar por status.
 
 ## Acessos FTP

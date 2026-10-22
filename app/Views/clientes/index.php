@@ -12,6 +12,8 @@ $formatarData = static function (?string $data): string {
     return (new DateTimeImmutable($data))->format('d/m/Y');
 };
 
+$meses = static fn (int $n): string => $n . ($n === 1 ? ' mês' : ' meses');
+
 $buildUrl = static function (string $status) use ($appUrl, $search): string {
     $params = array_filter(['q' => $search ?: null, 'status' => $status ?: null]);
 
@@ -53,6 +55,31 @@ $buildUrl = static function (string $status) use ($appUrl, $search): string {
                 <span class="filter-chip__count"><?= $contagem['ok'] ?></span> Ok
             </a>
         </div>
+    </div>
+
+    <div class="status-criterios">
+        <p class="form-hint">
+            Critérios: <strong>Ok</strong> até <?= $meses($limites['ok']) ?> ·
+            <strong>Moderado</strong> até <?= $meses($limites['moderado']) ?> ·
+            <strong>Crítico</strong> acima de <?= $meses($limites['moderado']) ?> ou sem reunião registrada.
+        </p>
+        <?php if (Auth::isAdmin()): ?>
+            <details class="status-criterios__ajuste">
+                <summary>Ajustar critérios</summary>
+                <form method="POST" action="<?= $appUrl ?>/clientes/limites" class="status-criterios__form">
+                    <?= Csrf::field() ?>
+                    <div class="form-group">
+                        <label class="form-label" for="meses_ok">Ok até (meses)</label>
+                        <input type="number" id="meses_ok" name="meses_ok" class="form-control" min="1" max="120" required value="<?= $limites['ok'] ?>">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="meses_moderado">Moderado até (meses)</label>
+                        <input type="number" id="meses_moderado" name="meses_moderado" class="form-control" min="1" max="120" required value="<?= $limites['moderado'] ?>">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm">Salvar</button>
+                </form>
+            </details>
+        <?php endif; ?>
     </div>
 
     <?php if (empty($clientes)): ?>

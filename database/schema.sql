@@ -53,3 +53,13 @@ CREATE TABLE IF NOT EXISTS wordpress (
     CONSTRAINT fk_wordpress_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE RESTRICT,
     INDEX idx_wordpress_cliente (cliente)
 ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS configuracoes (
+    chave VARCHAR(100) PRIMARY KEY,
+    valor VARCHAR(255) NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+INSERT IGNORE INTO configuracoes (chave, valor) VALUES
+    ('status_meses_ok', '2'),
+    ('status_meses_moderado', '4');

@@ -7,11 +7,22 @@ use App\Core\Database;
 
 class FtpAccount
 {
-    /** Meses desde a última reunião até virar status "ok". */
-    private const LIMITE_OK = 2;
+    /** Meses até o status "ok" quando não há configuração salva. */
+    private const LIMITE_OK_PADRAO = 2;
 
-    /** Meses desde a última reunião até virar status "moderado" (acima disso é "crítico"). */
-    private const LIMITE_MODERADO = 4;
+    /** Meses até o status "moderado" (acima disso é "crítico") quando não há configuração salva. */
+    private const LIMITE_MODERADO_PADRAO = 4;
+
+    /**
+     * Limites em meses definidos pelos administradores na tela de Clientes.
+     */
+    public static function limitesStatus(): array
+    {
+        return [
+            'ok' => (int) Configuracao::get('status_meses_ok', (string) self::LIMITE_OK_PADRAO),
+            'moderado' => (int) Configuracao::get('status_meses_moderado', (string) self::LIMITE_MODERADO_PADRAO),
+        ];
+    }
 
     public static function all(?string $search = null): array
     {
@@ -30,9 +41,10 @@ class FtpAccount
         }
 
         $accounts = $stmt->fetchAll();
+        $limites = self::limitesStatus();
 
         foreach ($accounts as &$account) {
-            $account['status'] = self::calcularStatus($account['ultima_reuniao']);
+            $account['status'] = self::calcularStatus($account['ultima_reuniao'], $limites);
         }
 
         return $accounts;
@@ -177,11 +189,13 @@ class FtpAccount
 
     /**
      * Deriva o status a partir dos meses passados desde a última reunião:
-     * até 2 meses = ok, de 2 a 4 = moderado, acima de 4 = crítico.
-     * Sem reunião registrada, o cliente é tratado como crítico.
+     * até $limites['ok'] = ok, até $limites['moderado'] = moderado, acima disso = crítico
+     * (padrão 2 e 4, ver limitesStatus()). Sem reunião registrada, o cliente é tratado como crítico.
      */
-    public static function calcularStatus(?string $ultimaReuniao): string
+    public static function calcularStatus(?string $ultimaReuniao, ?array $limites = null): string
     {
+        $limites ??= self::limitesStatus();
+
         if (!$ultimaReuniao) {
             return 'critico';
         }
@@ -195,11 +209,11 @@ class FtpAccount
 
         $mesesPassados = $ultima->diff($hoje)->y * 12 + $ultima->diff($hoje)->m;
 
-        if ($mesesPassados <= self::LIMITE_OK) {
+        if ($mesesPassados <= $limites['ok']) {
             return 'ok';
         }
 
-        if ($mesesPassados <= self::LIMITE_MODERADO) {
+        if ($mesesPassados <= $limites['moderado']) {
             return 'moderado';
         }
 

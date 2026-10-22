@@ -422,6 +422,27 @@ tbody tr:hover { background: var(--accent-light); }
 .filter-chip--moderado { background: #fff6dd; color: #a86b00; }
 .filter-chip--ok { background: #e6f7ee; color: var(--success); }
 
+/* ---------- Critérios de status (legenda + ajuste) ---------- */
+.status-criterios { margin: -.5rem 0 1.25rem; }
+.status-criterios .form-hint { margin-top: 0; }
+.status-criterios__ajuste { display: inline-block; }
+.status-criterios__ajuste summary {
+    cursor: pointer;
+    margin-top: .4rem;
+    font-size: .82rem;
+    font-weight: 600;
+    color: var(--primary);
+}
+.status-criterios__form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: .75rem;
+    margin-top: .75rem;
+}
+.status-criterios__form .form-group { margin-bottom: 0; }
+.status-criterios__form .form-control { width: 160px; }
+
 /* ---------- Diálogo de confirmação ---------- */
 .confirm-dialog {
     border: none;

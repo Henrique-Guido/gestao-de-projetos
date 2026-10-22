@@ -6,6 +6,7 @@ use App\Core\Auth;
 use App\Core\Controller;
 use App\Core\Csrf;
 use App\Core\Flash;
+use App\Models\Configuracao;
 use App\Models\FtpAccount;
 
 class ClienteController extends Controller
@@ -45,7 +46,38 @@ class ClienteController extends Controller
             'contagem' => $contagem,
             'search' => $search,
             'statusFiltro' => $statusFiltro,
+            'limites' => FtpAccount::limitesStatus(),
         ]);
+    }
+
+    public function updateLimites(): void
+    {
+        if (!Auth::isAdmin()) {
+            Flash::set('error', 'Apenas administradores podem alterar os critérios de status.');
+            $this->redirect('/clientes');
+        }
+
+        $this->guardCsrf();
+
+        $faixa = ['options' => ['min_range' => 1, 'max_range' => 120]];
+        $ok = filter_var($this->input('meses_ok'), FILTER_VALIDATE_INT, $faixa);
+        $moderado = filter_var($this->input('meses_moderado'), FILTER_VALIDATE_INT, $faixa);
+
+        if ($ok === false || $moderado === false) {
+            Flash::set('error', 'Informe os meses como números inteiros entre 1 e 120.');
+            $this->redirect('/clientes');
+        }
+
+        if ($ok >= $moderado) {
+            Flash::set('error', 'O limite de "Ok" deve ser menor que o de "Moderado".');
+            $this->redirect('/clientes');
+        }
+
+        Configuracao::set('status_meses_ok', (string) $ok);
+        Configuracao::set('status_meses_moderado', (string) $moderado);
+
+        Flash::set('success', 'Critérios de status atualizados.');
+        $this->redirect('/clientes');
     }
 
     public function edit(string $id): void

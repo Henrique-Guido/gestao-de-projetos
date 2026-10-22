@@ -90,6 +90,8 @@ $router->post('/wordpress/{id}/reveal', [WordpressController::class, 'reveal']);
 
 $router->get('/clientes', [ClienteController::class, 'index']);
 $router->get('/clientes/{id}/edit', [ClienteController::class, 'edit']);
+// Antes de /clientes/{id}: o padrão {id} também casaria com "limites".
+$router->post('/clientes/limites', [ClienteController::class, 'updateLimites']);
 $router->post('/clientes/{id}', [ClienteController::class, 'update']);
 
 $router->get('/usuarios', [UserController::class, 'index']);
