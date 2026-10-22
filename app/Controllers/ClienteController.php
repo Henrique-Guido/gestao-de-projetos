@@ -1,0 +1,107 @@
+<?php
+
+namespace App\Controllers;
+
+use App\Core\Auth;
+use App\Core\Controller;
+use App\Core\Csrf;
+use App\Core\Flash;
+use App\Models\FtpAccount;
+
+class ClienteController extends Controller
+{
+    public function __construct()
+    {
+        if (!Auth::check()) {
+            header('Location: ' . (require dirname(__DIR__) . '/Config/config.php')['app']['url'] . '/login');
+            exit;
+        }
+    }
+
+    public function index(): void
+    {
+        $search = trim($_GET['q'] ?? '');
+        $statusValidos = ['ok', 'moderado', 'critico'];
+        $statusFiltro = in_array($_GET['status'] ?? '', $statusValidos, true) ? $_GET['status'] : '';
+
+        $todos = FtpAccount::all($search ?: null);
+
+        $severidade = ['critico' => 0, 'moderado' => 1, 'ok' => 2];
+        usort($todos, static fn (array $a, array $b) => $severidade[$a['status']] <=> $severidade[$b['status']]
+            ?: $a['cliente'] <=> $b['cliente']);
+
+        $contagem = ['ok' => 0, 'moderado' => 0, 'critico' => 0];
+        foreach ($todos as $cliente) {
+            $contagem[$cliente['status']]++;
+        }
+
+        $clientes = $statusFiltro === ''
+            ? $todos
+            : array_values(array_filter($todos, static fn (array $c) => $c['status'] === $statusFiltro));
+
+        $this->view('clientes/index', [
+            'clientes' => $clientes,
+            'total' => count($todos),
+            'contagem' => $contagem,
+            'search' => $search,
+            'statusFiltro' => $statusFiltro,
+        ]);
+    }
+
+    public function edit(string $id): void
+    {
+        $this->guardPermissao();
+
+        $cliente = FtpAccount::find((int) $id);
+
+        if (!$cliente) {
+            Flash::set('error', 'Cliente não encontrado.');
+            $this->redirect('/clientes');
+        }
+
+        $this->view('clientes/edit', ['cliente' => $cliente]);
+    }
+
+    public function update(string $id): void
+    {
+        $this->guardPermissao();
+        $this->guardCsrf();
+
+        $cliente = FtpAccount::find((int) $id);
+
+        if (!$cliente) {
+            Flash::set('error', 'Cliente não encontrado.');
+            $this->redirect('/clientes');
+        }
+
+        if ($this->input('nome', '') === '') {
+            Flash::set('error', 'O campo nome é obrigatório.');
+            $this->redirect("/clientes/{$id}/edit");
+        }
+
+        FtpAccount::updateCliente((int) $id, [
+            'cliente' => $this->input('nome'),
+            'ultima_reuniao' => $this->input('ultima_reuniao'),
+            'proxima_reuniao' => $this->input('proxima_reuniao'),
+        ]);
+
+        Flash::set('success', 'Cliente atualizado com sucesso.');
+        $this->redirect('/clientes');
+    }
+
+    private function guardCsrf(): void
+    {
+        if (!Csrf::verify($this->input('_token'))) {
+            Flash::set('error', 'Sessão expirada. Tente novamente.');
+            $this->redirect('/clientes');
+        }
+    }
+
+    private function guardPermissao(): void
+    {
+        if (!Auth::can('pode_editar_clientes')) {
+            Flash::set('error', 'Você não tem permissão para editar clientes.');
+            $this->redirect('/clientes');
+        }
+    }
+}
