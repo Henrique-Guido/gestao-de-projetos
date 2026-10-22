@@ -48,6 +48,35 @@ abstract class Controller
     {
         $value = $_POST[$key] ?? $default;
 
+        // Campos enviados como array (ex.: name[]=x) são tratados como ausentes.
+        if (is_array($value)) {
+            return $default;
+        }
+
         return is_string($value) ? trim($value) : $value;
+    }
+
+    /**
+     * Igual a input(), mas sem trim: usado em senhas, onde espaços nas bordas fazem parte do valor.
+     */
+    protected function inputRaw(string $key, ?string $default = null): ?string
+    {
+        $value = $_POST[$key] ?? $default;
+
+        return is_string($value) ? $value : $default;
+    }
+
+    protected function query(string $key, string $default = ''): string
+    {
+        $value = $_GET[$key] ?? $default;
+
+        return is_string($value) ? trim($value) : $default;
+    }
+
+    protected function isValidDate(string $value): bool
+    {
+        $date = \DateTimeImmutable::createFromFormat('!Y-m-d', $value);
+
+        return $date !== false && $date->format('Y-m-d') === $value;
     }
 }

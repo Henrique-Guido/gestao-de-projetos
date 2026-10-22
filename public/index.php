@@ -11,6 +11,34 @@ if ($config['app']['debug']) {
     ini_set('display_errors', '0');
 }
 
+// Bufferiza a saída para que uma exceção no meio da renderização descarte o HTML parcial.
+ob_start();
+
+set_exception_handler(function (Throwable $e) use ($config): void {
+    error_log((string) $e);
+
+    while (ob_get_level() > 0) {
+        ob_end_clean();
+    }
+
+    if (!headers_sent()) {
+        http_response_code(500);
+    }
+
+    if ($config['app']['debug']) {
+        echo '<pre>' . htmlspecialchars((string) $e) . '</pre>';
+        return;
+    }
+
+    (new App\Controllers\ErrorController())->serverError();
+});
+
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: DENY');
+header('Referrer-Policy: same-origin');
+header("Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+    . "font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'");
+
 session_set_cookie_params([
     'lifetime' => 0,
     'path' => '/',

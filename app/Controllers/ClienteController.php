@@ -20,9 +20,9 @@ class ClienteController extends Controller
 
     public function index(): void
     {
-        $search = trim($_GET['q'] ?? '');
+        $search = $this->query('q');
         $statusValidos = ['ok', 'moderado', 'critico'];
-        $statusFiltro = in_array($_GET['status'] ?? '', $statusValidos, true) ? $_GET['status'] : '';
+        $statusFiltro = in_array($this->query('status'), $statusValidos, true) ? $this->query('status') : '';
 
         $todos = FtpAccount::all($search ?: null);
 
@@ -74,8 +74,10 @@ class ClienteController extends Controller
             $this->redirect('/clientes');
         }
 
-        if ($this->input('nome', '') === '') {
-            Flash::set('error', 'O campo nome é obrigatório.');
+        $errors = $this->validate();
+
+        if ($errors) {
+            Flash::set('error', implode(' ', $errors));
             $this->redirect("/clientes/{$id}/edit");
         }
 
@@ -87,6 +89,26 @@ class ClienteController extends Controller
 
         Flash::set('success', 'Cliente atualizado com sucesso.');
         $this->redirect('/clientes');
+    }
+
+    private function validate(): array
+    {
+        $errors = [];
+
+        if ($this->input('nome', '') === '') {
+            $errors[] = 'O campo nome é obrigatório.';
+        } elseif (mb_strlen($this->input('nome')) > 150) {
+            $errors[] = 'O campo nome deve ter no máximo 150 caracteres.';
+        }
+
+        foreach (['ultima_reuniao' => 'última reunião', 'proxima_reuniao' => 'próxima reunião'] as $campo => $rotulo) {
+            $data = $this->input($campo, '');
+            if ($data !== '' && !$this->isValidDate($data)) {
+                $errors[] = "A data de {$rotulo} é inválida.";
+            }
+        }
+
+        return $errors;
     }
 
     private function guardCsrf(): void

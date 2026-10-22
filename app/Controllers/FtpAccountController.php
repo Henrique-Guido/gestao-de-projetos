@@ -20,7 +20,7 @@ class FtpAccountController extends Controller
 
     public function index(): void
     {
-        $search = trim($_GET['q'] ?? '');
+        $search = $this->query('q');
         $accounts = FtpAccount::all($search ?: null);
 
         $this->view('ftp/index', [
@@ -54,7 +54,7 @@ class FtpAccountController extends Controller
             'proxima_reuniao' => $this->input('proxima_reuniao'),
             'host' => $this->input('host'),
             'usuario' => $this->input('usuario'),
-            'senha' => $this->input('senha'),
+            'senha' => $this->inputRaw('senha'),
             'user_id' => Auth::id(),
         ]);
 
@@ -101,7 +101,7 @@ class FtpAccountController extends Controller
             'proxima_reuniao' => $this->input('proxima_reuniao'),
             'host' => $this->input('host'),
             'usuario' => $this->input('usuario'),
-            'senha' => $this->input('senha'),
+            'senha' => $this->inputRaw('senha'),
         ]);
 
         Flash::set('success', 'Acesso FTP atualizado com sucesso.');
@@ -125,14 +125,18 @@ class FtpAccountController extends Controller
 
     public function reveal(string $id): void
     {
-        if (!Csrf::verify($_POST['_token'] ?? null)) {
-            $this->json(['error' => 'Token inválido.'], 419);
+        if (!Csrf::verify($this->input('_token'))) {
+            $this->json(['error' => 'Token inválido.'], 403);
         }
 
         $account = FtpAccount::find((int) $id);
 
         if (!$account) {
             $this->json(['error' => 'Não encontrado.'], 404);
+        }
+
+        if (empty($account['senha'])) {
+            $this->json(['error' => 'Senha não cadastrada.'], 404);
         }
 
         $senha = FtpAccount::decryptPassword($account['senha']) ?? "Key Error";
@@ -142,8 +146,8 @@ class FtpAccountController extends Controller
 
     public function test(string $id): void
     {
-        if (!Csrf::verify($_POST['_token'] ?? null)) {
-            $this->json(['ok' => false, 'message' => 'Sessão expirada. Recarregue a página e tente novamente.'], 419);
+        if (!Csrf::verify($this->input('_token'))) {
+            $this->json(['ok' => false, 'message' => 'Sessão expirada. Recarregue a página e tente novamente.'], 403);
         }
 
         $account = FtpAccount::find((int) $id);
@@ -168,6 +172,23 @@ class FtpAccountController extends Controller
 
         if ($this->input('cliente', '') === '') {
             $errors[] = 'O campo cliente é obrigatório.';
+        } elseif (mb_strlen($this->input('cliente')) > 150) {
+            $errors[] = 'O campo cliente deve ter no máximo 150 caracteres.';
+        }
+
+        if (mb_strlen($this->input('host', '')) > 255) {
+            $errors[] = 'O campo host deve ter no máximo 255 caracteres.';
+        }
+
+        if (mb_strlen($this->input('usuario', '')) > 150) {
+            $errors[] = 'O campo usuário deve ter no máximo 150 caracteres.';
+        }
+
+        foreach (['ultima_reuniao' => 'última reunião', 'proxima_reuniao' => 'próxima reunião'] as $campo => $rotulo) {
+            $data = $this->input($campo, '');
+            if ($data !== '' && !$this->isValidDate($data)) {
+                $errors[] = "A data de {$rotulo} é inválida.";
+            }
         }
 
         /*

@@ -10,4 +10,9 @@ class ErrorController extends Controller
     {
         $this->view('errors/404', [], null);
     }
+
+    public function serverError(): void
+    {
+        $this->view('errors/500', [], null);
+    }
 }

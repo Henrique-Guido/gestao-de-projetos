@@ -39,7 +39,7 @@ class UserController extends Controller
 
         $errors = $this->validate();
 
-        if ($this->input('password', '') === '' || strlen($this->input('password', '')) < 8) {
+        if (strlen($this->inputRaw('password', '')) < 8) {
             $errors[] = 'A senha deve ter pelo menos 8 caracteres.';
         }
 
@@ -59,7 +59,7 @@ class UserController extends Controller
         User::create([
             'name' => $this->input('name'),
             'email' => $this->input('email'),
-            'password' => $this->input('password'),
+            'password' => $this->inputRaw('password'),
             'role' => $this->input('role'),
             'pode_criar_clientes' => $this->input('pode_criar_clientes') !== null,
             'pode_editar_clientes' => $this->input('pode_editar_clientes') !== null,
@@ -94,6 +94,11 @@ class UserController extends Controller
 
         $errors = $this->validate();
 
+        $novaSenha = $this->inputRaw('password', '');
+        if ($novaSenha !== '' && strlen($novaSenha) < 8) {
+            $errors[] = 'A senha deve ter pelo menos 8 caracteres.';
+        }
+
         $novoNome = $this->input('name');
         $outroComMesmoNome = User::findByName($novoNome);
         if ($outroComMesmoNome && (int) $outroComMesmoNome['id'] !== (int) $id) {
@@ -119,7 +124,7 @@ class UserController extends Controller
         User::update((int) $id, [
             'name' => $this->input('name'),
             'email' => $this->input('email'),
-            'password' => $this->input('password'),
+            'password' => $novaSenha,
             'role' => $novoRole,
             'pode_criar_clientes' => $this->input('pode_criar_clientes') !== null,
             'pode_editar_clientes' => $this->input('pode_editar_clientes') !== null,
@@ -145,7 +150,17 @@ class UserController extends Controller
             $this->redirect('/usuarios');
         }
 
-        User::delete((int) $id);
+        try {
+            User::delete((int) $id);
+        } catch (\PDOException $e) {
+            // 23000 = violação de chave estrangeira: o usuário cadastrou clientes, blogs ou acessos WordPress.
+            if ($e->getCode() !== '23000') {
+                throw $e;
+            }
+
+            Flash::set('error', 'Este usuário possui cadastros vinculados (clientes, blogs ou WordPress) e não pode ser removido.');
+            $this->redirect('/usuarios');
+        }
 
         Flash::set('success', 'Usuário removido.');
         $this->redirect('/usuarios');
@@ -157,10 +172,14 @@ class UserController extends Controller
 
         if ($this->input('name', '') === '') {
             $errors[] = 'O campo nome é obrigatório.';
+        } elseif (mb_strlen($this->input('name')) > 150) {
+            $errors[] = 'O campo nome deve ter no máximo 150 caracteres.';
         }
 
         if ($this->input('email', '') === '') {
             $errors[] = 'O campo e-mail é obrigatório.';
+        } elseif (mb_strlen($this->input('email')) > 150 || !filter_var($this->input('email'), FILTER_VALIDATE_EMAIL)) {
+            $errors[] = 'Informe um e-mail válido.';
         }
 
         if (!in_array($this->input('role'), ['admin', 'user'], true)) {

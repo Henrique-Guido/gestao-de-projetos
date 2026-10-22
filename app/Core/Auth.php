@@ -12,7 +12,13 @@ class Auth
     {
         $user = User::findByName($name);
 
-        if (!$user || !password_verify($password, $user['password'])) {
+        if (!$user) {
+            // Gera um hash mesmo sem usuário para igualar o tempo de resposta e não revelar quais nomes existem.
+            password_hash($password, PASSWORD_BCRYPT);
+            return false;
+        }
+
+        if (!password_verify($password, $user['password'])) {
             return false;
         }
 
@@ -32,7 +38,7 @@ class Auth
 
     public static function check(): bool
     {
-        return isset($_SESSION['user_id']);
+        return self::user() !== null;
     }
 
     public static function id(): ?int
@@ -42,12 +48,17 @@ class Auth
 
     public static function user(): ?array
     {
-        if (!self::check()) {
+        if (!isset($_SESSION['user_id'])) {
             return null;
         }
 
         if (self::$user === null) {
             self::$user = User::findById(self::id());
+
+            // Usuário removido do banco: encerra a sessão órfã.
+            if (self::$user === null) {
+                self::logout();
+            }
         }
 
         return self::$user;

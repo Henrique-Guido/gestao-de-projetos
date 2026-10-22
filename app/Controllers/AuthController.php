@@ -26,7 +26,7 @@ class AuthController extends Controller
         }
 
         $name = $this->input('name', '');
-        $password = $this->input('password', '');
+        $password = $this->inputRaw('password', '');
 
         if ($name === '' || $password === '') {
             Flash::set('error', 'Informe nome e senha.');
@@ -43,6 +43,11 @@ class AuthController extends Controller
 
     public function logout(): void
     {
+        if (!Csrf::verify($this->input('_token'))) {
+            Flash::set('error', 'Sessão expirada. Tente novamente.');
+            $this->redirect('/ftp');
+        }
+
         Auth::logout();
         $this->redirect('/login');
     }

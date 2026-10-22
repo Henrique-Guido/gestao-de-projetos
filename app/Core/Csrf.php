@@ -20,6 +20,8 @@ class Csrf
 
     public static function verify(?string $token): bool
     {
-        return is_string($token) && hash_equals($_SESSION['csrf_token'] ?? '', $token);
+        $expected = $_SESSION['csrf_token'] ?? '';
+
+        return $expected !== '' && is_string($token) && hash_equals($expected, $token);
     }
 }

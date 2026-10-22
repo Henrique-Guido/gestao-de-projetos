@@ -55,7 +55,7 @@ class FtpAccount
 
     public static function create(array $data): int
     {
-        $senha = trim((string) ($data['senha'] ?? ''));
+        $senha = (string) ($data['senha'] ?? '');
 
         $stmt = Database::connection()->prepare(
             'INSERT INTO ftp_accounts (cliente, ultima_reuniao, proxima_reuniao, host, usuario, senha, user_id)

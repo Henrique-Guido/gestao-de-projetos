@@ -20,7 +20,7 @@ class BlogController extends Controller
 
     public function index(): void
     {
-        $search = trim($_GET['q'] ?? '');
+        $search = $this->query('q');
         $blogs = Blog::all($search ?: null);
 
         $this->view('blogs/index', [
@@ -51,7 +51,7 @@ class BlogController extends Controller
         Blog::create([
             'cliente' => $this->input('cliente'),
             'usuario' => $this->input('usuario'),
-            'senha' => $this->input('senha'),
+            'senha' => $this->inputRaw('senha'),
             'user_id' => Auth::id(),
         ]);
 
@@ -95,7 +95,7 @@ class BlogController extends Controller
         Blog::update((int) $id, [
             'cliente' => $this->input('cliente'),
             'usuario' => $this->input('usuario'),
-            'senha' => $this->input('senha'),
+            'senha' => $this->inputRaw('senha'),
         ]);
 
         Flash::set('success', 'Acesso ao blog atualizado com sucesso.');
@@ -119,8 +119,8 @@ class BlogController extends Controller
 
     public function reveal(string $id): void
     {
-        if (!Csrf::verify($_POST['_token'] ?? null)) {
-            $this->json(['error' => 'Token inválido.'], 419);
+        if (!Csrf::verify($this->input('_token'))) {
+            $this->json(['error' => 'Token inválido.'], 403);
         }
 
         $blog = Blog::find((int) $id);
@@ -140,13 +140,17 @@ class BlogController extends Controller
 
         if ($this->input('cliente', '') === '') {
             $errors[] = 'O campo cliente é obrigatório.';
+        } elseif (mb_strlen($this->input('cliente')) > 150) {
+            $errors[] = 'O campo cliente deve ter no máximo 150 caracteres.';
         }
 
         if ($this->input('usuario', '') === '') {
             $errors[] = 'O campo usuário é obrigatório.';
+        } elseif (mb_strlen($this->input('usuario')) > 150) {
+            $errors[] = 'O campo usuário deve ter no máximo 150 caracteres.';
         }
 
-        if ($requireSenha && $this->input('senha', '') === '') {
+        if ($requireSenha && $this->inputRaw('senha', '') === '') {
             $errors[] = 'O campo senha é obrigatório.';
         }
 
