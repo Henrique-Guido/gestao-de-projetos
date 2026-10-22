@@ -63,3 +63,18 @@ CREATE TABLE IF NOT EXISTS configuracoes (
 INSERT IGNORE INTO configuracoes (chave, valor) VALUES
     ('status_meses_ok', '2'),
     ('status_meses_moderado', '4');
+
+CREATE TABLE IF NOT EXISTS ecommerce (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    cliente VARCHAR(150) NOT NULL,
+    link VARCHAR(255) NOT NULL,
+    email VARCHAR(150) NULL,
+    usuario VARCHAR(150) NULL,
+    codigo VARCHAR(100) NULL,
+    senha TEXT NOT NULL,
+    user_id INT UNSIGNED NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_ecommerce_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE RESTRICT,
+    INDEX idx_ecommerce_cliente (cliente)
+) ENGINE=InnoDB;

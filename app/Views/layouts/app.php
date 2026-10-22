@@ -28,6 +28,7 @@ $isActive = static fn (string $path): string => str_starts_with($currentPath, $p
                 <a class="sidebar__link<?= $isActive('/ftp') ?>" href="<?= $appUrl ?>/ftp">Acessos FTP</a>
                 <a class="sidebar__link<?= $isActive('/blogs') ?>" href="<?= $appUrl ?>/blogs">Blogs</a>
                 <a class="sidebar__link<?= $isActive('/wordpress') ?>" href="<?= $appUrl ?>/wordpress">WordPress</a>
+                <a class="sidebar__link<?= $isActive('/ecommerce') ?>" href="<?= $appUrl ?>/ecommerce">E-commerce</a>
             </nav>
             <?php if (Auth::isAdmin()): ?>
                 <div class="sidebar__divider"></div>

@@ -51,6 +51,7 @@ session_start();
 use App\Controllers\AuthController;
 use App\Controllers\BlogController;
 use App\Controllers\ClienteController;
+use App\Controllers\EcommerceController;
 use App\Controllers\FtpAccountController;
 use App\Controllers\UserController;
 use App\Controllers\WordpressController;
@@ -87,6 +88,14 @@ $router->get('/wordpress/{id}/edit', [WordpressController::class, 'edit']);
 $router->post('/wordpress/{id}', [WordpressController::class, 'update']);
 $router->post('/wordpress/{id}/delete', [WordpressController::class, 'destroy']);
 $router->post('/wordpress/{id}/reveal', [WordpressController::class, 'reveal']);
+
+$router->get('/ecommerce', [EcommerceController::class, 'index']);
+$router->get('/ecommerce/create', [EcommerceController::class, 'create']);
+$router->post('/ecommerce', [EcommerceController::class, 'store']);
+$router->get('/ecommerce/{id}/edit', [EcommerceController::class, 'edit']);
+$router->post('/ecommerce/{id}', [EcommerceController::class, 'update']);
+$router->post('/ecommerce/{id}/delete', [EcommerceController::class, 'destroy']);
+$router->post('/ecommerce/{id}/reveal', [EcommerceController::class, 'reveal']);
 
 $router->get('/clientes', [ClienteController::class, 'index']);
 $router->get('/clientes/{id}/edit', [ClienteController::class, 'edit']);
