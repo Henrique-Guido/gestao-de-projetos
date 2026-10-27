@@ -71,11 +71,13 @@ class ExportController extends Controller
 
         $xlsx->addSheet('Clientes', self::CORES['clientes'], [
             ['titulo' => 'Cliente', 'largura' => 38],
+            ['titulo' => 'Site', 'largura' => 36],
             ['titulo' => 'Última reunião', 'largura' => 18],
             ['titulo' => 'Próxima reunião', 'largura' => 18],
             ['titulo' => 'Status', 'largura' => 14],
         ], array_map(fn (array $c) => [
             ['valor' => $c['cliente'], 'negrito' => true],
+            ['valor' => $c['site'], 'tipo' => 'link'],
             ['valor' => $c['ultima_reuniao'], 'tipo' => 'data'],
             ['valor' => $c['proxima_reuniao'], 'tipo' => 'data'],
             $this->status($c['status']),

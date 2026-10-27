@@ -50,6 +50,7 @@ class FtpAccountController extends Controller
 
         FtpAccount::create([
             'cliente' => $this->input('cliente'),
+            'site' => $this->inputUrl('site'),
             'ultima_reuniao' => $this->input('ultima_reuniao'),
             'proxima_reuniao' => $this->input('proxima_reuniao'),
             'host' => $this->input('host'),
@@ -97,6 +98,7 @@ class FtpAccountController extends Controller
 
         FtpAccount::update((int) $id, [
             'cliente' => $this->input('cliente'),
+            'site' => $this->inputUrl('site'),
             'ultima_reuniao' => $this->input('ultima_reuniao'),
             'proxima_reuniao' => $this->input('proxima_reuniao'),
             'host' => $this->input('host'),
@@ -174,6 +176,11 @@ class FtpAccountController extends Controller
             $errors[] = 'O campo cliente é obrigatório.';
         } elseif (mb_strlen($this->input('cliente')) > 150) {
             $errors[] = 'O campo cliente deve ter no máximo 150 caracteres.';
+        }
+
+        $site = $this->inputUrl('site');
+        if ($site !== '' && !$this->isValidUrl($site)) {
+            $errors[] = 'Informe um site válido.';
         }
 
         if (mb_strlen($this->input('host', '')) > 255) {

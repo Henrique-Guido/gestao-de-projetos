@@ -79,4 +79,24 @@ abstract class Controller
 
         return $date !== false && $date->format('Y-m-d') === $value;
     }
+
+    /**
+     * URL do POST com "https://" quando digitada sem protocolo.
+     * Garante que o href exibido nas listagens seja sempre http(s).
+     */
+    protected function inputUrl(string $key): string
+    {
+        $url = $this->input($key, '');
+
+        if ($url !== '' && !preg_match('#^https?://#i', $url)) {
+            $url = 'https://' . $url;
+        }
+
+        return $url;
+    }
+
+    protected function isValidUrl(string $url): bool
+    {
+        return mb_strlen($url) <= 255 && filter_var($url, FILTER_VALIDATE_URL) !== false;
+    }
 }

@@ -8,7 +8,7 @@ permissões. Feito em PHP puro com arquitetura MVC.
 
 | Tela | Rota | Conteúdo |
 |---|---|---|
-| Clientes | `/clientes` | Cliente, última e próxima reunião, status calculado (ok / moderado / crítico) |
+| Clientes | `/clientes` | Cliente, site, última e próxima reunião, status calculado (ok / moderado / crítico) |
 | Acessos FTP | `/ftp` | Cliente, host, usuário e senha, com teste de conexão FTP |
 | Blogs | `/blogs` | Cliente, usuário e senha |
 | WordPress | `/wordpress` | Cliente, usuário e senha |

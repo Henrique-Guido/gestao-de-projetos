@@ -11,6 +11,10 @@
             <input type="text" id="cliente" name="cliente" class="form-control" required autofocus value="<?= htmlspecialchars($account['cliente']) ?>">
         </div>
         <div class="form-group">
+            <label class="form-label" for="site">Site</label>
+            <input type="text" id="site" name="site" class="form-control" placeholder="https://www.exemplo.com.br" value="<?= htmlspecialchars($account['site'] ?? '') ?>">
+        </div>
+        <div class="form-group">
             <label class="form-label" for="ultima_reuniao">Última reunião</label>
             <input type="date" id="ultima_reuniao" name="ultima_reuniao" class="form-control" value="<?= htmlspecialchars($account['ultima_reuniao'] ?? '') ?>">
         </div>

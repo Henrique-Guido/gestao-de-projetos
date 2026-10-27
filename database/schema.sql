@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS ftp_accounts (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     cliente VARCHAR(150) NOT NULL,
+    site VARCHAR(255) NULL,
     ultima_reuniao DATE NULL,
     proxima_reuniao DATE NULL,
     host VARCHAR(255) NULL,

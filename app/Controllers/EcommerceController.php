@@ -50,7 +50,7 @@ class EcommerceController extends Controller
 
         Ecommerce::create([
             'cliente' => $this->input('cliente'),
-            'link' => $this->link(),
+            'link' => $this->inputUrl('link'),
             'email' => $this->input('email'),
             'usuario' => $this->input('usuario'),
             'codigo' => $this->input('codigo'),
@@ -97,7 +97,7 @@ class EcommerceController extends Controller
 
         Ecommerce::update((int) $id, [
             'cliente' => $this->input('cliente'),
-            'link' => $this->link(),
+            'link' => $this->inputUrl('link'),
             'email' => $this->input('email'),
             'usuario' => $this->input('usuario'),
             'codigo' => $this->input('codigo'),
@@ -140,21 +140,6 @@ class EcommerceController extends Controller
         $this->json(['senha' => $senha]);
     }
 
-    /**
-     * Link da loja informado no formulário, com "https://" quando digitado sem protocolo.
-     * Garante que o href exibido na listagem seja sempre http(s).
-     */
-    private function link(): string
-    {
-        $link = $this->input('link', '');
-
-        if ($link !== '' && !preg_match('#^https?://#i', $link)) {
-            $link = 'https://' . $link;
-        }
-
-        return $link;
-    }
-
     private function validate(bool $requireSenha = true): array
     {
         $errors = [];
@@ -165,10 +150,10 @@ class EcommerceController extends Controller
             $errors[] = 'O campo cliente deve ter no máximo 150 caracteres.';
         }
 
-        $link = $this->link();
+        $link = $this->inputUrl('link');
         if ($link === '') {
             $errors[] = 'O campo link da loja é obrigatório.';
-        } elseif (mb_strlen($link) > 255 || !filter_var($link, FILTER_VALIDATE_URL)) {
+        } elseif (!$this->isValidUrl($link)) {
             $errors[] = 'Informe um link da loja válido.';
         }
 

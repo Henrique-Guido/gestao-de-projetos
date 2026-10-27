@@ -96,6 +96,7 @@ $buildUrl = static function (string $status) use ($appUrl, $search): string {
                 <thead>
                     <tr>
                         <th>Nome</th>
+                        <th>Site</th>
                         <th>Última reunião</th>
                         <th>Próxima reunião</th>
                         <th>Status</th>
@@ -106,6 +107,15 @@ $buildUrl = static function (string $status) use ($appUrl, $search): string {
                     <?php foreach ($clientes as $cliente): ?>
                         <tr class="row-status row-status--<?= $cliente['status'] ?>">
                             <td class="cliente-cell"><strong><?= htmlspecialchars($cliente['cliente']) ?></strong></td>
+                            <td>
+                                <?php if ($cliente['site']): ?>
+                                    <a href="<?= htmlspecialchars($cliente['site']) ?>" target="_blank" rel="noopener noreferrer">
+                                        <?= htmlspecialchars(preg_replace('#^https?://#i', '', rtrim($cliente['site'], '/'))) ?>
+                                    </a>
+                                <?php else: ?>
+                                    —
+                                <?php endif; ?>
+                            </td>
                             <td><?= $formatarData($cliente['ultima_reuniao']) ?></td>
                             <td><?= $formatarData($cliente['proxima_reuniao']) ?></td>
                             <td>

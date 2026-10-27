@@ -31,11 +31,11 @@ class FtpAccount
         if ($search) {
             $stmt = $pdo->prepare(
                 'SELECT * FROM ftp_accounts
-                 WHERE cliente LIKE ? OR host LIKE ? OR usuario LIKE ?
+                 WHERE cliente LIKE ? OR site LIKE ? OR host LIKE ? OR usuario LIKE ?
                  ORDER BY cliente ASC'
             );
             $like = "%{$search}%";
-            $stmt->execute([$like, $like, $like]);
+            $stmt->execute([$like, $like, $like, $like]);
         } else {
             $stmt = $pdo->query('SELECT * FROM ftp_accounts ORDER BY cliente ASC');
         }
@@ -70,12 +70,13 @@ class FtpAccount
         $senha = (string) ($data['senha'] ?? '');
 
         $stmt = Database::connection()->prepare(
-            'INSERT INTO ftp_accounts (cliente, ultima_reuniao, proxima_reuniao, host, usuario, senha, user_id)
-             VALUES (:cliente, :ultima_reuniao, :proxima_reuniao, :host, :usuario, :senha, :user_id)'
+            'INSERT INTO ftp_accounts (cliente, site, ultima_reuniao, proxima_reuniao, host, usuario, senha, user_id)
+             VALUES (:cliente, :site, :ultima_reuniao, :proxima_reuniao, :host, :usuario, :senha, :user_id)'
         );
 
         $stmt->execute([
             'cliente' => $data['cliente'],
+            'site' => ($data['site'] ?? '') ?: null,
             'ultima_reuniao' => $data['ultima_reuniao'] ?: null,
             'proxima_reuniao' => $data['proxima_reuniao'] ?: null,
             'host' => $data['host'] ?: null,
@@ -89,10 +90,11 @@ class FtpAccount
 
     public static function update(int $id, array $data): void
     {
-        $sql = 'UPDATE ftp_accounts SET cliente = :cliente, ultima_reuniao = :ultima_reuniao,
+        $sql = 'UPDATE ftp_accounts SET cliente = :cliente, site = :site, ultima_reuniao = :ultima_reuniao,
                 proxima_reuniao = :proxima_reuniao, host = :host, usuario = :usuario';
         $params = [
             'cliente' => $data['cliente'],
+            'site' => ($data['site'] ?? '') ?: null,
             'ultima_reuniao' => $data['ultima_reuniao'] ?: null,
             'proxima_reuniao' => $data['proxima_reuniao'] ?: null,
             'host' => $data['host'],
@@ -114,12 +116,13 @@ class FtpAccount
     public static function updateCliente(int $id, array $data): void
     {
         $stmt = Database::connection()->prepare(
-            'UPDATE ftp_accounts SET cliente = :cliente, ultima_reuniao = :ultima_reuniao,
+            'UPDATE ftp_accounts SET cliente = :cliente, site = :site, ultima_reuniao = :ultima_reuniao,
              proxima_reuniao = :proxima_reuniao WHERE id = :id'
         );
 
         $stmt->execute([
             'cliente' => $data['cliente'],
+            'site' => ($data['site'] ?? '') ?: null,
             'ultima_reuniao' => $data['ultima_reuniao'] ?: null,
             'proxima_reuniao' => $data['proxima_reuniao'] ?: null,
             'id' => $id,
