@@ -227,7 +227,7 @@ h1, h2, h3, h4 { color: var(--text); font-weight: 600; margin: 0 0 .5rem; }
 
 /* Primária e secundária são claras: o texto escuro garante contraste (o claro ficaria abaixo de 3:1). */
 .btn-primary { background: var(--primary); color: var(--aside-bg); }
-.btn-primary:hover { background: var(--aside-bg); color: var(--primary); }
+.btn-primary:hover { background: color-mix(in srgb, var(--primary) 85%, var(--aside-bg)); }
 
 .btn-secondary { background: var(--secondary); color: var(--aside-bg); }
 .btn-secondary:hover { background: var(--aside-bg); color: var(--secondary); }
@@ -239,7 +239,7 @@ h1, h2, h3, h4 { color: var(--text); font-weight: 600; margin: 0 0 .5rem; }
 }
 .btn-outline:hover { background: var(--primary); }
 
-.btn-danger { background: #fdecea; color: var(--danger); }
+.btn-danger { background: #fdecea; color: var(--danger); border: 1px solid var(--danger); }
 .btn-danger:hover { background: var(--danger); color: var(--bg); }
 
 .btn-sm { padding: .4rem .75rem; font-size: .8rem; }
@@ -340,7 +340,6 @@ tbody tr:hover { background: var(--hover); }
 .password-cell {
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
     gap: .4rem;
     max-width: 260px;
 }
@@ -351,12 +350,13 @@ tbody tr:hover { background: var(--hover); }
     overflow-wrap: anywhere;
 }
 
-.actions-cell { display: flex; flex-wrap: wrap; gap: .4rem; }
+/* Fica numa div dentro da <td>: com display: flex na própria célula, a borda da linha sai desalinhada. */
+.actions-cell { display: flex; align-items: center; gap: .4rem; }
 
-/* Links longos ficam em uma linha e são cortados com reticências; o endereço completo aparece no title. */
-.link-cell a {
+/* Textos longos (link, e-mail, usuário) ficam em uma linha e são cortados com reticências; o valor completo aparece no title. */
+.truncate-cell > * {
     display: block;
-    max-width: 220px;
+    max-width: 160px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

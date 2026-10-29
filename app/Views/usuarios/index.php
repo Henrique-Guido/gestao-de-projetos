@@ -40,15 +40,17 @@ use App\Core\Csrf;
                             </td>
                             <td><?= $usuario['role'] === 'admin' || $usuario['pode_criar_clientes'] ? 'Sim' : 'Não' ?></td>
                             <td><?= $usuario['role'] === 'admin' || $usuario['pode_editar_clientes'] ? 'Sim' : 'Não' ?></td>
-                            <td class="actions-cell">
-                                <a class="btn btn-sm btn-outline" href="<?= $appUrl ?>/usuarios/<?= $usuario['id'] ?>/edit">Editar</a>
-                                <?php if ((int) $usuario['id'] !== Auth::id()): ?>
-                                    <form method="POST" action="<?= $appUrl ?>/usuarios/<?= $usuario['id'] ?>/delete"
-                                        data-confirm="Remover o usuário <?= htmlspecialchars($usuario['name']) ?>?">
-                                        <?= Csrf::field() ?>
-                                        <button type="submit" class="btn btn-sm btn-danger">Excluir</button>
-                                    </form>
-                                <?php endif; ?>
+                            <td>
+                                <div class="actions-cell">
+                                    <a class="btn btn-sm btn-outline" href="<?= $appUrl ?>/usuarios/<?= $usuario['id'] ?>/edit">Editar</a>
+                                    <?php if ((int) $usuario['id'] !== Auth::id()): ?>
+                                        <form method="POST" action="<?= $appUrl ?>/usuarios/<?= $usuario['id'] ?>/delete"
+                                            data-confirm="Remover o usuário <?= htmlspecialchars($usuario['name']) ?>?">
+                                            <?= Csrf::field() ?>
+                                            <button type="submit" class="btn btn-sm btn-danger">Excluir</button>
+                                        </form>
+                                    <?php endif; ?>
+                                </div>
                             </td>
                         </tr>
                     <?php endforeach; ?>

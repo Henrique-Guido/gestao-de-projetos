@@ -1,6 +1,15 @@
 <?php
 use App\Core\Auth;
 use App\Core\Csrf;
+
+// Valor em uma linha só, cortado com reticências pelo CSS; o texto completo fica no title.
+$truncado = static function (?string $valor): string {
+    if ($valor === null || $valor === '') {
+        return '—';
+    }
+    $valor = htmlspecialchars($valor);
+    return '<span title="' . $valor . '">' . $valor . '</span>';
+};
 ?>
 <div class="page-header">
     <div>
@@ -40,15 +49,15 @@ use App\Core\Csrf;
                     <?php foreach ($lojas as $loja): ?>
                         <tr>
                             <td class="cliente-cell"><strong><?= htmlspecialchars($loja['cliente']) ?></strong></td>
-                            <td class="link-cell">
+                            <td class="truncate-cell">
                                 <a href="<?= htmlspecialchars($loja['link']) ?>" target="_blank" rel="noopener noreferrer"
                                     title="<?= htmlspecialchars($loja['link']) ?>">
                                     <?= htmlspecialchars(preg_replace('#^https?://#i', '', rtrim($loja['link'], '/'))) ?>
                                 </a>
                             </td>
-                            <td><?= htmlspecialchars($loja['email'] ?? '') ?: '—' ?></td>
-                            <td><?= htmlspecialchars($loja['usuario'] ?? '') ?: '—' ?></td>
-                            <td><?= htmlspecialchars($loja['codigo'] ?? '') ?: '—' ?></td>
+                            <td class="truncate-cell"><?= $truncado($loja['email']) ?></td>
+                            <td class="truncate-cell"><?= $truncado($loja['usuario']) ?></td>
+                            <td class="truncate-cell"><?= $truncado($loja['codigo']) ?></td>
                             <td>
                                 <div class="password-cell">
                                     <span class="password-mask">••••••••</span>
@@ -61,22 +70,24 @@ use App\Core\Csrf;
                                         data-copy-url="<?= $appUrl ?>/ecommerce/<?= $loja['id'] ?>/reveal">Copiar</button>
                                 </div>
                             </td>
-                            <td class="actions-cell">
-                                <?php if (Auth::can('pode_editar_clientes')): ?>
-                                    <a class="btn btn-sm btn-outline btn-icon" href="<?= $appUrl ?>/ecommerce/<?= $loja['id'] ?>/edit"
-                                        aria-label="Editar" title="Editar">
-                                        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-                                    </a>
-                                <?php endif; ?>
-                                <?php if (Auth::isAdmin()): ?>
-                                    <form method="POST" action="<?= $appUrl ?>/ecommerce/<?= $loja['id'] ?>/delete"
-                                        data-confirm="Remover o acesso ao e-commerce de <?= htmlspecialchars($loja['cliente']) ?>?">
-                                        <?= Csrf::field() ?>
-                                        <button type="submit" class="btn btn-sm btn-danger btn-icon" aria-label="Excluir" title="Excluir">
-                                            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
-                                        </button>
-                                    </form>
-                                <?php endif; ?>
+                            <td>
+                                <div class="actions-cell">
+                                    <?php if (Auth::can('pode_editar_clientes')): ?>
+                                        <a class="btn btn-sm btn-outline btn-icon" href="<?= $appUrl ?>/ecommerce/<?= $loja['id'] ?>/edit"
+                                            aria-label="Editar" title="Editar">
+                                            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                                        </a>
+                                    <?php endif; ?>
+                                    <?php if (Auth::isAdmin()): ?>
+                                        <form method="POST" action="<?= $appUrl ?>/ecommerce/<?= $loja['id'] ?>/delete"
+                                            data-confirm="Remover o acesso ao e-commerce de <?= htmlspecialchars($loja['cliente']) ?>?">
+                                            <?= Csrf::field() ?>
+                                            <button type="submit" class="btn btn-sm btn-danger btn-icon" aria-label="Excluir" title="Excluir">
+                                                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                                            </button>
+                                        </form>
+                                    <?php endif; ?>
+                                </div>
                             </td>
                         </tr>
                     <?php endforeach; ?>
