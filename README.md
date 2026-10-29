@@ -1,8 +1,10 @@
-# Publinet - Gestão de Acessos e Clientes
+# Gestão de Acessos e Clientes
 
-Sistema interno para cadastro de clientes, acompanhamento de reuniões e guarda
+Sistema para agências: cadastro de clientes, acompanhamento de reuniões e guarda
 de acessos (FTP, blogs, WordPress e lojas virtuais), com controle de usuários e
-permissões. Feito em PHP puro com arquitetura MVC.
+permissões. Feito em PHP puro com arquitetura MVC. Cada agência roda a sua
+instalação, com nome e logo próprios definidos no `.env` (veja
+[Personalização](#personalização)).
 
 ## Funcionalidades
 
@@ -50,8 +52,9 @@ padrões. O modelo versionado é o `.env.example`.
 
 | Variável | Descrição |
 |---|---|
-| `APP_NAME` | Nome exibido no título das páginas |
-| `APP_URL` | URL base do sistema, sem barra no final (ex.: `http://localhost/publinet-gestao`). É usada em todos os links e redirecionamentos, inclusive para descobrir o subdiretório |
+| `APP_NAME` | Nome do sistema ou da agência. Aparece no título das páginas, no menu lateral, no login e na planilha exportada |
+| `APP_LOGO` | Opcional. Logo da agência, como caminho dentro de `public/` (ex.: `assets/img/logo.png`). Vazio = ícone padrão com o `APP_NAME` |
+| `APP_URL` | URL base do sistema, sem barra no final (ex.: `http://localhost/gestao-clientes`). É usada em todos os links e redirecionamentos, inclusive para descobrir o subdiretório |
 | `APP_ENV` | `production` ou `development` (reservado; ainda não altera o comportamento) |
 | `APP_DEBUG` | `true` mostra o erro completo na tela; `false` mostra uma página 500 genérica e registra o erro no log |
 | `APP_TIMEZONE` | Fuso horário (padrão `America/Sao_Paulo`). Afeta datas exibidas e o cálculo de status |
@@ -105,6 +108,19 @@ testes automatizados; para checar a sintaxe de um arquivo, use
 Não há migrations: o `database/schema.sql` é a fonte única do schema. Ao criar
 ou alterar tabelas, atualize o arquivo e aplique o SQL correspondente
 manualmente nos bancos já existentes.
+
+## Personalização
+
+- **Nome e logo**: `APP_NAME` e `APP_LOGO` no `.env`. O logo aparece sobre fundo
+  branco no menu lateral (altura de 32px) e no login (40px). Por causa da CSP,
+  ele precisa estar no próprio servidor, dentro de `public/`.
+- **Cores**: variáveis CSS no início de `public/assets/css/app.css`. A paleta
+  padrão usa `--primary` (`#58a6ff`), `--secondary` (`#00ff88`) e `--bg`
+  (`#f5f5f5`). Como a primária e a secundária são claras, os botões usam texto
+  escuro, e links e textos sobre fundo claro usam `--primary-strong`, um tom
+  mais escuro do mesmo azul.
+- **Ícone**: `public/assets/img/icone.svg` (menu, login e favicon) e
+  `public/favicon.ico`.
 
 ## Usuários e permissões
 

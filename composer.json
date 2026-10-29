@@ -1,6 +1,6 @@
 {
-    "name": "publinet/gestao-ftp",
-    "description": "Sistema de gestao de acessos FTP - Publinet",
+    "name": "agencia/gestao-clientes",
+    "description": "Sistema de gestao de clientes e acessos para agencias",
     "type": "project",
     "license": "proprietary",
     "require": {

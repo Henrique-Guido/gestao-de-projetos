@@ -1,7 +1,7 @@
-CREATE DATABASE IF NOT EXISTS publinet_gestao
+CREATE DATABASE IF NOT EXISTS gestao_clientes
     CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-USE publinet_gestao;
+USE gestao_clientes;
 
 CREATE TABLE IF NOT EXISTS users (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,

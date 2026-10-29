@@ -19,7 +19,7 @@ class VerificadorTags
     private const MAX_CONTEINERES = 3;
     private const TEMPO_TOTAL = 20;
     private const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)'
-        . ' Chrome/129.0 Safari/537.36 PublinetGestao/1.0';
+        . ' Chrome/129.0 Safari/537.36 GestaoClientes/1.0';
 
     private float $prazo = 0;
 

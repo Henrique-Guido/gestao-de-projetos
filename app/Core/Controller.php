@@ -10,6 +10,8 @@ abstract class Controller
         extract($data);
         $appName = $config['app']['name'];
         $appUrl = $config['app']['url'];
+        // Logo da agência (caminho dentro de public/); sem ele, as telas usam o ícone padrão + APP_NAME.
+        $appLogo = $config['app']['logo'] !== '' ? $appUrl . '/' . ltrim($config['app']['logo'], '/') : null;
         $viewFile = dirname(__DIR__) . "/Views/{$view}.php";
 
         if (!is_file($viewFile)) {
@@ -21,7 +23,7 @@ abstract class Controller
             return;
         }
 
-        $content = function () use ($viewFile, $data, $appName, $appUrl) {
+        $content = function () use ($viewFile, $data, $appName, $appUrl, $appLogo) {
             extract($data);
             require $viewFile;
         };

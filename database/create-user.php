@@ -2,7 +2,7 @@
 
 /**
  * Script de linha de comando para criar um usuário de acesso ao sistema.
- * Uso: php database/create-user.php "Nome" "email@publinet1.com.br" "senha"
+ * Uso: php database/create-user.php "Nome" "email@exemplo.com" "senha"
  */
 
 require dirname(__DIR__) . '/vendor/autoload.php';

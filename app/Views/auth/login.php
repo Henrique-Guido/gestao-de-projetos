@@ -5,9 +5,13 @@ use App\Core\Flash;
 $error = Flash::get('error');
 ?>
 <div class="auth-card__logo">
-    <img src="<?= $appUrl ?>/assets/img/logo-publinet.png" alt="Publinet">
+    <?php if ($appLogo): ?>
+        <img src="<?= htmlspecialchars($appLogo) ?>" alt="<?= htmlspecialchars($appName) ?>">
+    <?php else: ?>
+        <img src="<?= $appUrl ?>/assets/img/icone.svg" alt="">
+    <?php endif; ?>
 </div>
-<h1>Gestão de Clientes</h1>
+<h1><?= htmlspecialchars($appName) ?></h1>
 <p class="auth-card__subtitle">Entre com sua conta para continuar</p>
 
 <?php if ($error): ?>

@@ -286,7 +286,7 @@ class XlsxWriter
             . '<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties"'
             . ' xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/"'
             . ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
-            . '<dc:title>' . self::xml($titulo) . '</dc:title><dc:creator>Publinet</dc:creator>'
+            . '<dc:title>' . self::xml($titulo) . '</dc:title><dc:creator>' . self::xml($titulo) . '</dc:creator>'
             . "<dcterms:created xsi:type=\"dcterms:W3CDTF\">{$agora}</dcterms:created>"
             . '</cp:coreProperties>';
     }

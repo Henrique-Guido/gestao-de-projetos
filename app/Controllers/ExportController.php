@@ -22,8 +22,8 @@ class ExportController extends Controller
     ];
 
     private const CORES = [
-        'resumo' => '0A2561',
-        'clientes' => '073898',
+        'resumo' => '0D1117',
+        'clientes' => '58A6FF',
         'ftp' => '0E7C86',
         'blogs' => 'E8710A',
         'wordpress' => '21759B',
@@ -50,6 +50,7 @@ class ExportController extends Controller
         $blogs = Blog::all();
         $sites = Wordpress::all();
         $lojas = Ecommerce::all();
+        $appName = (require dirname(__DIR__) . '/Config/config.php')['app']['name'];
 
         $severidade = ['critico' => 0, 'moderado' => 1, 'ok' => 2];
         $porStatus = $clientes;
@@ -61,7 +62,7 @@ class ExportController extends Controller
         $xlsx->addSheet('Resumo', self::CORES['resumo'], [
             ['titulo' => '', 'largura' => 34],
             ['titulo' => '', 'largura' => 44],
-        ], $this->resumo([
+        ], $this->resumo($appName, [
             'Clientes' => [self::CORES['clientes'], count($clientes)],
             'Acessos FTP' => [self::CORES['ftp'], count($clientes)],
             'Blogs' => [self::CORES['blogs'], count($blogs)],
@@ -134,14 +135,14 @@ class ExportController extends Controller
         $arquivo = tempnam(sys_get_temp_dir(), 'xlsx');
 
         try {
-            $xlsx->save($arquivo, 'Publinet - Gestão de Clientes');
+            $xlsx->save($arquivo, $appName);
 
             while (ob_get_level() > 0) {
                 ob_end_clean();
             }
 
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            header('Content-Disposition: attachment; filename="publinet-gestao-' . date('Y-m-d-His') . '.xlsx"');
+            header('Content-Disposition: attachment; filename="gestao-clientes-' . date('Y-m-d-His') . '.xlsx"');
             header('Content-Length: ' . filesize($arquivo));
             header('Cache-Control: no-store');
             readfile($arquivo);
@@ -155,13 +156,13 @@ class ExportController extends Controller
     /**
      * Aba de abertura: data da exportação, quantidade de registros por aba e legenda dos status.
      */
-    private function resumo(array $abas): array
+    private function resumo(string $appName, array $abas): array
     {
         $cabecalho = static fn (string $texto) => ['valor' => $texto, 'negrito' => true, 'cor' => 'FFFFFF', 'fundo' => self::CORES['resumo'], 'borda' => true];
         $limites = FtpAccount::limitesStatus();
 
         $linhas = [
-            [['valor' => 'Publinet · Gestão de Clientes', 'negrito' => true, 'tamanho' => 16, 'cor' => self::CORES['clientes']]],
+            [['valor' => $appName, 'negrito' => true, 'tamanho' => 16, 'cor' => self::CORES['clientes']]],
             [['valor' => 'Exportado em ' . date('d/m/Y \à\s H:i') . ' por ' . (Auth::user()['name'] ?? ''), 'cor' => '5A5A5A']],
             [],
             [$cabecalho('Aba'), $cabecalho('Registros')],

@@ -14,15 +14,22 @@ $isActive = static fn (string $path): string => str_starts_with($currentPath, $p
     <meta name="csrf-token" content="<?= htmlspecialchars(Csrf::token()) ?>">
     <title><?= htmlspecialchars($appName) ?></title>
     <link rel="icon" href="<?= $appUrl ?>/favicon.ico" sizes="any">
-    <link rel="icon" type="image/png" href="<?= $appUrl ?>/assets/img/logo-publinet.png">
+    <link rel="icon" type="image/svg+xml" href="<?= $appUrl ?>/assets/img/icone.svg">
     <link rel="stylesheet" href="<?= $appUrl ?>/assets/css/app.css?v=<?= filemtime(dirname(__DIR__, 3) . '/public/assets/css/app.css') ?>">
 </head>
 <body>
     <div class="app-shell">
         <aside class="sidebar">
-            <div class="sidebar__logo">
-                <img src="<?= $appUrl ?>/assets/img/logo-publinet.png" alt="Publinet">
-            </div>
+            <?php if ($appLogo): ?>
+                <div class="sidebar__logo sidebar__logo--image">
+                    <img src="<?= htmlspecialchars($appLogo) ?>" alt="<?= htmlspecialchars($appName) ?>">
+                </div>
+            <?php else: ?>
+                <div class="sidebar__logo">
+                    <img class="brand-mark" src="<?= $appUrl ?>/assets/img/icone.svg" alt="">
+                    <span class="sidebar__brand"><?= htmlspecialchars($appName) ?></span>
+                </div>
+            <?php endif; ?>
             <nav class="sidebar__nav">
                 <a class="sidebar__link<?= $isActive('/clientes') ?>" href="<?= $appUrl ?>/clientes">Clientes</a>
                 <a class="sidebar__link<?= $isActive('/ftp') ?>" href="<?= $appUrl ?>/ftp">Acessos FTP</a>

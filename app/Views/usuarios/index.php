@@ -35,7 +35,7 @@ use App\Core\Csrf;
                                 <?php if ($usuario['role'] === 'admin'): ?>
                                     <span class="badge">Administrador</span>
                                 <?php else: ?>
-                                    <span class="badge" style="background:#f1f3f5; color: var(--text-muted);">Usuário</span>
+                                    <span class="badge badge--neutral">Usuário</span>
                                 <?php endif; ?>
                             </td>
                             <td><?= $usuario['role'] === 'admin' || $usuario['pode_criar_clientes'] ? 'Sim' : 'Não' ?></td>

@@ -6,7 +6,8 @@ Env::load(dirname(__DIR__, 2) . '/.env');
 
 return [
     'app' => [
-        'name' => Env::get('APP_NAME', 'Publinet - Gestao de Clientes'),
+        'name' => Env::get('APP_NAME', 'Gestão de Clientes'),
+        'logo' => Env::get('APP_LOGO', ''),
         'url' => rtrim(Env::get('APP_URL', 'http://localhost'), '/'),
         'env' => Env::get('APP_ENV', 'production'),
         'debug' => filter_var(Env::get('APP_DEBUG', false), FILTER_VALIDATE_BOOLEAN),
@@ -16,7 +17,7 @@ return [
     'db' => [
         'host' => Env::get('DB_HOST', '127.0.0.1'),
         'port' => Env::get('DB_PORT', '3306'),
-        'database' => Env::get('DB_DATABASE', 'publinet_gestao'),
+        'database' => Env::get('DB_DATABASE', 'gestao_clientes'),
         'username' => Env::get('DB_USERNAME', 'root'),
         'password' => Env::get('DB_PASSWORD', ''),
     ],
