@@ -8,6 +8,7 @@ use App\Core\Csrf;
 use App\Core\Flash;
 use App\Models\Configuracao;
 use App\Models\FtpAccount;
+use App\Services\VerificadorTags;
 
 class ClienteController extends Controller
 {
@@ -122,6 +123,28 @@ class ClienteController extends Controller
 
         Flash::set('success', 'Cliente atualizado com sucesso.');
         $this->redirect('/clientes');
+    }
+
+    public function verificarTags(string $id): void
+    {
+        if (!Csrf::verify($this->input('_token'))) {
+            $this->json(['estado' => 'erro', 'mensagem' => 'Sessão expirada. Recarregue a página e tente novamente.'], 403);
+        }
+
+        $cliente = FtpAccount::find((int) $id);
+
+        if (!$cliente) {
+            $this->json(['estado' => 'erro', 'mensagem' => 'Cliente não encontrado.'], 404);
+        }
+
+        if (empty($cliente['site'])) {
+            $this->json(['estado' => 'erro', 'mensagem' => 'Este cliente não tem site cadastrado.']);
+        }
+
+        // A verificação pode levar alguns segundos: libera a sessão para não travar outras abas.
+        session_write_close();
+
+        $this->json((new VerificadorTags())->verificar($cliente['site']));
     }
 
     private function validate(): array

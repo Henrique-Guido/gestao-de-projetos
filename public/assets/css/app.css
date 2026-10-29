@@ -469,6 +469,7 @@ tbody tr:hover { background: var(--accent-light); }
     font-size: .95rem;
     color: var(--text);
     line-height: 1.5;
+    white-space: pre-line;
 }
 
 .confirm-dialog__actions {
@@ -493,6 +494,7 @@ tbody tr:hover { background: var(--accent-light); }
 
 .confirm-dialog__icon--success { display: flex; background: #e6f7ee; color: var(--success); }
 .confirm-dialog__icon--error { display: flex; background: #fdecea; color: var(--danger); }
+.confirm-dialog__icon--warning { display: flex; background: #fff6dd; color: #a86b00; }
 
 /* ---------- Toasts / Flash ---------- */
 .toast-container {

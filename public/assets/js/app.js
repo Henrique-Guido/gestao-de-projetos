@@ -52,9 +52,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const ICON_SUCCESS = '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>';
     const ICON_ERROR = '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
 
+    const ICON_WARNING = '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+
+    // ok: true (sucesso), false (erro) ou 'aviso' (resultado parcial).
     const showInfo = function (message, ok) {
-        infoIcon.className = 'confirm-dialog__icon ' + (ok ? 'confirm-dialog__icon--success' : 'confirm-dialog__icon--error');
-        infoIcon.innerHTML = ok ? ICON_SUCCESS : ICON_ERROR;
+        const tipo = ok === 'aviso' ? 'warning' : (ok ? 'success' : 'error');
+        infoIcon.className = 'confirm-dialog__icon confirm-dialog__icon--' + tipo;
+        infoIcon.innerHTML = { success: ICON_SUCCESS, warning: ICON_WARNING, error: ICON_ERROR }[tipo];
         infoMessage.textContent = message;
         infoDialog.showModal();
     };
@@ -148,6 +152,35 @@ document.addEventListener('DOMContentLoaded', function () {
                 })
                 .catch(function () {
                     showInfo('Não foi possível testar a conexão. Tente novamente.', false);
+                })
+                .finally(function () {
+                    button.disabled = false;
+                    button.textContent = original;
+                });
+        });
+    });
+
+    // Verificar Google Analytics e Tag Manager no site do cliente.
+    document.querySelectorAll('[data-tags-url]').forEach(function (button) {
+        button.addEventListener('click', function () {
+            const token = document.querySelector('meta[name="csrf-token"]').content;
+            const original = button.textContent;
+
+            button.disabled = true;
+            button.textContent = 'Verificando...';
+
+            fetch(button.dataset.tagsUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: '_token=' + encodeURIComponent(token),
+            })
+                .then(function (response) { return response.json(); })
+                .then(function (data) {
+                    const estado = { ok: true, parcial: 'aviso' }[data.estado] || false;
+                    showInfo(data.mensagem || 'Não foi possível verificar o site.', estado);
+                })
+                .catch(function () {
+                    showInfo('Não foi possível verificar o site. Tente novamente.', false);
                 })
                 .finally(function () {
                     button.disabled = false;

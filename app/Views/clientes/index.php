@@ -124,6 +124,11 @@ $buildUrl = static function (string $status) use ($appUrl, $search): string {
                                 </span>
                             </td>
                             <td class="actions-cell">
+                                <?php if ($cliente['site']): ?>
+                                    <button type="button" class="btn btn-sm btn-outline"
+                                        data-tags-url="<?= $appUrl ?>/clientes/<?= $cliente['id'] ?>/verificar-tags"
+                                        title="Verifica se o site tem Google Analytics e Google Tag Manager">Verificar tags</button>
+                                <?php endif; ?>
                                 <?php if (Auth::can('pode_editar_clientes')): ?>
                                     <a class="btn btn-sm btn-outline" href="<?= $appUrl ?>/clientes/<?= $cliente['id'] ?>/edit">Editar</a>
                                 <?php endif; ?>

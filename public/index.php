@@ -105,6 +105,7 @@ $router->get('/clientes/{id}/edit', [ClienteController::class, 'edit']);
 // Antes de /clientes/{id}: o padrão {id} também casaria com "limites".
 $router->post('/clientes/limites', [ClienteController::class, 'updateLimites']);
 $router->post('/clientes/{id}', [ClienteController::class, 'update']);
+$router->post('/clientes/{id}/verificar-tags', [ClienteController::class, 'verificarTags']);
 
 $router->get('/exportar/excel', [ExportController::class, 'excel']);
 

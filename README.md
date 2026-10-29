@@ -133,6 +133,22 @@ O padrão é X = 2 e Y = 4. Administradores podem mudar esses limites em
 `configuracoes` e valem para todos os usuários. A listagem permite buscar por
 nome e filtrar por status.
 
+### Verificar tags (Google Analytics e Tag Manager)
+
+Clientes com site cadastrado têm o botão **Verificar tags**. O servidor acessa
+a página inicial do site e informa se encontrou o **Google Tag Manager**
+(`GTM-…`) e o **Google Analytics 4** (`G-…`). Ele também abre o contêiner do
+Tag Manager, porque o GA4 configurado lá dentro não aparece no HTML. Se o site
+ainda tiver o Universal Analytics (`UA-…`), versão antiga e descontinuada, isso
+também é avisado.
+
+Limitações:
+- A verificação lê o HTML da página. Tags inseridas por JavaScript depois que a
+  página carrega (comum em sites feitos em React/Next.js) ou só após o aceite de
+  cookies podem não ser detectadas.
+- Sites com proteção contra robôs (ex.: Cloudflare) podem recusar o acesso.
+- Por segurança, só são acessados endereços públicos nas portas 80 e 443.
+
 ## Acessos (FTP, Blogs, WordPress e E-commerce)
 
 - As senhas ficam cifradas no banco e nunca vão para o HTML. Elas são buscadas
