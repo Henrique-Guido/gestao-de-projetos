@@ -40,8 +40,9 @@ use App\Core\Csrf;
                     <?php foreach ($lojas as $loja): ?>
                         <tr>
                             <td class="cliente-cell"><strong><?= htmlspecialchars($loja['cliente']) ?></strong></td>
-                            <td>
-                                <a href="<?= htmlspecialchars($loja['link']) ?>" target="_blank" rel="noopener noreferrer">
+                            <td class="link-cell">
+                                <a href="<?= htmlspecialchars($loja['link']) ?>" target="_blank" rel="noopener noreferrer"
+                                    title="<?= htmlspecialchars($loja['link']) ?>">
                                     <?= htmlspecialchars(preg_replace('#^https?://#i', '', rtrim($loja['link'], '/'))) ?>
                                 </a>
                             </td>

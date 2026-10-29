@@ -353,6 +353,15 @@ tbody tr:hover { background: var(--hover); }
 
 .actions-cell { display: flex; flex-wrap: wrap; gap: .4rem; }
 
+/* Links longos ficam em uma linha e são cortados com reticências; o endereço completo aparece no title. */
+.link-cell a {
+    display: block;
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .badge {
     display: inline-block;
     background: var(--primary);

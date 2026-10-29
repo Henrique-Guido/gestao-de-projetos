@@ -119,7 +119,7 @@ manualmente nos bancos já existentes.
   (`#f5f5f5`). Como a primária e a secundária são claras, os botões usam texto
   escuro, e links e textos sobre fundo claro usam `--primary-strong`, um tom
   mais escuro do mesmo azul.
-- **Ícone**: `public/assets/img/icone.svg` (menu, login e favicon) e
+- **Ícone**: `public/assets/img/logo.png` (menu, login e favicon) e
   `public/favicon.ico`.
 
 ## Usuários e permissões

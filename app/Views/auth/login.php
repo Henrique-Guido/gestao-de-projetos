@@ -8,7 +8,7 @@ $error = Flash::get('error');
     <?php if ($appLogo): ?>
         <img src="<?= htmlspecialchars($appLogo) ?>" alt="<?= htmlspecialchars($appName) ?>">
     <?php else: ?>
-        <img src="<?= $appUrl ?>/assets/img/icone.svg" alt="">
+        <img src="<?= $appUrl ?>/assets/img/logo.png" alt="">
     <?php endif; ?>
 </div>
 <h1><?= htmlspecialchars($appName) ?></h1>
