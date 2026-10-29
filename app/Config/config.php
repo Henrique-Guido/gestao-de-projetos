@@ -6,7 +6,7 @@ Env::load(dirname(__DIR__, 2) . '/.env');
 
 return [
     'app' => [
-        'name' => Env::get('APP_NAME', 'Gestão de Clientes'),
+        'name' => Env::get('APP_NAME', 'Gestão de Projetos'),
         'logo' => Env::get('APP_LOGO', ''),
         'url' => rtrim(Env::get('APP_URL', 'http://localhost'), '/'),
         'env' => Env::get('APP_ENV', 'production'),
@@ -17,8 +17,8 @@ return [
     'db' => [
         'host' => Env::get('DB_HOST', '127.0.0.1'),
         'port' => Env::get('DB_PORT', '3306'),
-        'database' => Env::get('DB_DATABASE', 'gestao_clientes'),
+        'database' => Env::get('DB_DATABASE', 'gestao_projetos'),
         'username' => Env::get('DB_USERNAME', 'root'),
-        'password' => Env::get('DB_PASSWORD', ''),
+        'password' => Env::get('DB_PASSWORD', 'root'),
     ],
 ];

@@ -1,7 +1,7 @@
-CREATE DATABASE IF NOT EXISTS gestao_clientes
+CREATE DATABASE IF NOT EXISTS gestao_projetos
     CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-USE gestao_clientes;
+USE gestao_projetos;
 
 CREATE TABLE IF NOT EXISTS users (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
