@@ -52,6 +52,7 @@ class EcommerceController extends Controller
             'cliente' => $this->input('cliente'),
             'link' => $this->inputUrl('link'),
             'email' => $this->input('email'),
+            'senha_email' => $this->inputRaw('senha_email'),
             'usuario' => $this->input('usuario'),
             'codigo' => $this->input('codigo'),
             'senha' => $this->inputRaw('senha'),
@@ -99,6 +100,7 @@ class EcommerceController extends Controller
             'cliente' => $this->input('cliente'),
             'link' => $this->inputUrl('link'),
             'email' => $this->input('email'),
+            'senha_email' => $this->inputRaw('senha_email'),
             'usuario' => $this->input('usuario'),
             'codigo' => $this->input('codigo'),
             'senha' => $this->inputRaw('senha'),
@@ -125,6 +127,16 @@ class EcommerceController extends Controller
 
     public function reveal(string $id): void
     {
+        $this->revealColuna($id, 'senha');
+    }
+
+    public function revealEmail(string $id): void
+    {
+        $this->revealColuna($id, 'senha_email');
+    }
+
+    private function revealColuna(string $id, string $coluna): void
+    {
         if (!Csrf::verify($this->input('_token'))) {
             $this->json(['error' => 'Token inválido.'], 403);
         }
@@ -135,7 +147,11 @@ class EcommerceController extends Controller
             $this->json(['error' => 'Não encontrado.'], 404);
         }
 
-        $senha = Ecommerce::decryptPassword($loja['senha']) ?? "Key Error";
+        if (empty($loja[$coluna])) {
+            $this->json(['error' => 'Sem senha cadastrada.'], 404);
+        }
+
+        $senha = Ecommerce::decryptPassword($loja[$coluna]) ?? "Key Error";
 
         $this->json(['senha' => $senha]);
     }

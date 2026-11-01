@@ -70,6 +70,7 @@ CREATE TABLE IF NOT EXISTS ecommerce (
     cliente VARCHAR(150) NOT NULL,
     link VARCHAR(255) NOT NULL,
     email VARCHAR(150) NULL,
+    senha_email TEXT NULL,
     usuario VARCHAR(150) NULL,
     codigo VARCHAR(100) NULL,
     senha TEXT NOT NULL,

@@ -99,6 +99,7 @@ $router->get('/ecommerce/{id}/edit', [EcommerceController::class, 'edit']);
 $router->post('/ecommerce/{id}', [EcommerceController::class, 'update']);
 $router->post('/ecommerce/{id}/delete', [EcommerceController::class, 'destroy']);
 $router->post('/ecommerce/{id}/reveal', [EcommerceController::class, 'reveal']);
+$router->post('/ecommerce/{id}/reveal-email', [EcommerceController::class, 'revealEmail']);
 
 $router->get('/clientes', [ClienteController::class, 'index']);
 $router->get('/clientes/{id}/edit', [ClienteController::class, 'edit']);

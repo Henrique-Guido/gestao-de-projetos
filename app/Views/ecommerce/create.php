@@ -19,6 +19,10 @@
             <input type="email" id="email" name="email" class="form-control">
         </div>
         <div class="form-group">
+            <label class="form-label" for="senha_email">Senha do e-mail</label>
+            <input type="password" id="senha_email" name="senha_email" class="form-control" autocomplete="new-password">
+        </div>
+        <div class="form-group">
             <label class="form-label" for="usuario">Usuário</label>
             <input type="text" id="usuario" name="usuario" class="form-control">
         </div>

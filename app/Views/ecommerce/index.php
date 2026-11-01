@@ -39,6 +39,7 @@ $truncado = static function (?string $valor): string {
                         <th>Cliente</th>
                         <th>Loja</th>
                         <th>E-mail</th>
+                        <th>Senha do e-mail</th>
                         <th>Usuário</th>
                         <th>Código</th>
                         <th>Senha</th>
@@ -56,6 +57,22 @@ $truncado = static function (?string $valor): string {
                                 </a>
                             </td>
                             <td class="truncate-cell"><?= $truncado($loja['email']) ?></td>
+                            <td>
+                                <?php if (!empty($loja['senha_email'])): ?>
+                                    <div class="password-cell">
+                                        <span class="password-mask">••••••••</span>
+                                        <button type="button" class="btn btn-sm btn-outline btn-icon" data-revealed="false"
+                                            data-reveal-url="<?= $appUrl ?>/ecommerce/<?= $loja['id'] ?>/reveal-email"
+                                            aria-label="Mostrar senha" title="Mostrar senha">
+                                            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline"
+                                            data-copy-url="<?= $appUrl ?>/ecommerce/<?= $loja['id'] ?>/reveal-email">Copiar</button>
+                                    </div>
+                                <?php else: ?>
+                                    —
+                                <?php endif; ?>
+                            </td>
                             <td class="truncate-cell"><?= $truncado($loja['usuario']) ?></td>
                             <td class="truncate-cell"><?= $truncado($loja['codigo']) ?></td>
                             <td>

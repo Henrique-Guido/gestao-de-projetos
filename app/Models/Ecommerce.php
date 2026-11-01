@@ -38,14 +38,17 @@ class Ecommerce
     public static function create(array $data): int
     {
         $stmt = Database::connection()->prepare(
-            'INSERT INTO ecommerce (cliente, link, email, usuario, codigo, senha, user_id)
-             VALUES (:cliente, :link, :email, :usuario, :codigo, :senha, :user_id)'
+            'INSERT INTO ecommerce (cliente, link, email, senha_email, usuario, codigo, senha, user_id)
+             VALUES (:cliente, :link, :email, :senha_email, :usuario, :codigo, :senha, :user_id)'
         );
+
+        $senhaEmail = (string) ($data['senha_email'] ?? '');
 
         $stmt->execute([
             'cliente' => $data['cliente'],
             'link' => $data['link'],
             'email' => $data['email'] ?: null,
+            'senha_email' => $senhaEmail !== '' ? Crypto::encrypt($senhaEmail) : null,
             'usuario' => $data['usuario'] ?: null,
             'codigo' => $data['codigo'] ?: null,
             'senha' => Crypto::encrypt($data['senha']),
@@ -71,6 +74,11 @@ class Ecommerce
         if (!empty($data['senha'])) {
             $sql .= ', senha = :senha';
             $params['senha'] = Crypto::encrypt($data['senha']);
+        }
+
+        if (!empty($data['senha_email'])) {
+            $sql .= ', senha_email = :senha_email';
+            $params['senha_email'] = Crypto::encrypt($data['senha_email']);
         }
 
         $sql .= ' WHERE id = :id';

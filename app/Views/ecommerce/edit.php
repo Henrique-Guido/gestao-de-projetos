@@ -19,6 +19,11 @@
             <input type="email" id="email" name="email" class="form-control" value="<?= htmlspecialchars($loja['email'] ?? '') ?>">
         </div>
         <div class="form-group">
+            <label class="form-label" for="senha_email">Senha do e-mail</label>
+            <input type="password" id="senha_email" name="senha_email" class="form-control" autocomplete="new-password">
+            <p class="form-hint">Deixe em branco para manter a senha atual.</p>
+        </div>
+        <div class="form-group">
             <label class="form-label" for="usuario">Usuário</label>
             <input type="text" id="usuario" name="usuario" class="form-control" value="<?= htmlspecialchars($loja['usuario'] ?? '') ?>">
         </div>
