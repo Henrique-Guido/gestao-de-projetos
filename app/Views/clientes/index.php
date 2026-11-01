@@ -25,9 +25,15 @@ $buildUrl = static function (string $status) use ($appUrl, $search): string {
         <h1>Clientes</h1>
         <p class="form-hint">Painel de acompanhamento de reuniões com clientes.</p>
     </div>
-    <?php if (Auth::can('pode_criar_clientes')): ?>
-        <a href="<?= $appUrl ?>/ftp/create" class="btn btn-primary">+ Novo cliente</a>
-    <?php endif; ?>
+    <div class="page-header__actions">
+        <a href="<?= $appUrl ?>/clientes/grafico" class="btn btn-secondary">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="20" y2="20"/><line x1="7" y1="16" x2="7" y2="11"/><line x1="12" y1="16" x2="12" y2="5"/><line x1="17" y1="16" x2="17" y2="8"/></svg>
+            Ver gráfico
+        </a>
+        <?php if (Auth::can('pode_criar_clientes')): ?>
+            <a href="<?= $appUrl ?>/ftp/create" class="btn btn-primary">+ Novo cliente</a>
+        <?php endif; ?>
+    </div>
 </div>
 
 <div class="card">

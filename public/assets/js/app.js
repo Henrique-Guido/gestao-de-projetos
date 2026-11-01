@@ -215,4 +215,71 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
         });
     });
+
+    // Tooltip dos gráficos (hover e foco do teclado). Os textos vêm do banco: sempre via textContent.
+    const chartMarks = document.querySelectorAll('[data-chart-tip]');
+
+    if (chartMarks.length) {
+        const tooltip = document.createElement('div');
+        tooltip.className = 'chart-tooltip';
+        tooltip.hidden = true;
+        tooltip.setAttribute('aria-hidden', 'true');
+
+        const tipValue = document.createElement('span');
+        tipValue.className = 'chart-tooltip__value';
+        const tipLabel = document.createElement('span');
+        tipLabel.className = 'chart-tooltip__label';
+        const tipKey = document.createElement('span');
+        tipKey.className = 'chart-tooltip__key';
+        const tipLabelText = document.createElement('span');
+        tipLabel.append(tipKey, tipLabelText);
+        const tipDetail = document.createElement('span');
+        tipDetail.className = 'chart-tooltip__detail';
+
+        tooltip.append(tipValue, tipLabel, tipDetail);
+        document.body.appendChild(tooltip);
+
+        const showTip = function (mark) {
+            tipValue.textContent = mark.dataset.tipValue || '';
+            tipLabelText.textContent = mark.dataset.tipLabel || '';
+            tipKey.className = 'chart-tooltip__key chart-fill--' + (mark.dataset.tipStatus || '');
+            tipDetail.textContent = mark.dataset.tipDetail || '';
+            tipDetail.hidden = !mark.dataset.tipDetail;
+            tooltip.hidden = false;
+        };
+
+        // Posiciona ao lado do ponto (x, y), sem sair da janela.
+        const placeTip = function (x, y) {
+            const margin = 12;
+            const rect = tooltip.getBoundingClientRect();
+            let left = x + margin;
+            let top = y + margin;
+
+            if (left + rect.width > window.innerWidth - margin) {
+                left = x - rect.width - margin;
+            }
+            if (top + rect.height > window.innerHeight - margin) {
+                top = y - rect.height - margin;
+            }
+
+            tooltip.style.left = Math.max(margin, left) + 'px';
+            tooltip.style.top = Math.max(margin, top) + 'px';
+        };
+
+        const hideTip = function () { tooltip.hidden = true; };
+
+        chartMarks.forEach(function (mark) {
+            mark.addEventListener('pointerenter', function () { showTip(mark); });
+            mark.addEventListener('pointermove', function (event) { placeTip(event.clientX, event.clientY); });
+            mark.addEventListener('pointerleave', hideTip);
+            mark.addEventListener('focus', function () {
+                showTip(mark);
+                const rect = mark.getBoundingClientRect();
+                placeTip(rect.left + Math.min(rect.width, 320), rect.top);
+            });
+            mark.addEventListener('blur', hideTip);
+        });
+
+        document.querySelector('.chart-page')?.addEventListener('scroll', hideTip);
+    }
 });

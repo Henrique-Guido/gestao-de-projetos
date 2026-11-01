@@ -199,18 +199,11 @@ class FtpAccount
     {
         $limites ??= self::limitesStatus();
 
-        if (!$ultimaReuniao) {
+        $mesesPassados = self::mesesDesde($ultimaReuniao);
+
+        if ($mesesPassados === null) {
             return 'critico';
         }
-
-        $ultima = new \DateTimeImmutable($ultimaReuniao);
-        $hoje = new \DateTimeImmutable('today');
-
-        if ($ultima > $hoje) {
-            return 'ok';
-        }
-
-        $mesesPassados = $ultima->diff($hoje)->y * 12 + $ultima->diff($hoje)->m;
 
         if ($mesesPassados <= $limites['ok']) {
             return 'ok';
@@ -221,5 +214,27 @@ class FtpAccount
         }
 
         return 'critico';
+    }
+
+    /**
+     * Meses completos desde a última reunião (base do status). Null quando não há reunião registrada;
+     * uma data futura conta como 0.
+     */
+    public static function mesesDesde(?string $ultimaReuniao): ?int
+    {
+        if (!$ultimaReuniao) {
+            return null;
+        }
+
+        $ultima = new \DateTimeImmutable($ultimaReuniao);
+        $hoje = new \DateTimeImmutable('today');
+
+        if ($ultima > $hoje) {
+            return 0;
+        }
+
+        $diff = $ultima->diff($hoje);
+
+        return $diff->y * 12 + $diff->m;
     }
 }
