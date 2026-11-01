@@ -51,6 +51,42 @@ class ClienteController extends Controller
         ]);
     }
 
+    public function grafico(): void
+    {
+        $clientes = FtpAccount::all();
+        $limites = FtpAccount::limitesStatus();
+
+        $contagem = ['critico' => 0, 'moderado' => 0, 'ok' => 0];
+        foreach ($clientes as &$cliente) {
+            $cliente['meses'] = FtpAccount::mesesDesde($cliente['ultima_reuniao']);
+            $contagem[$cliente['status']]++;
+        }
+        unset($cliente);
+
+        // Do mais atrasado ao mais recente; sem reunião registrada vem primeiro.
+        usort($clientes, static fn (array $a, array $b) => ($b['meses'] ?? PHP_INT_MAX) <=> ($a['meses'] ?? PHP_INT_MAX)
+            ?: $a['cliente'] <=> $b['cliente']);
+
+        // Escala do eixo: cobre o maior atraso e o limite de "moderado", com marcações em passos redondos.
+        $maior = max([$limites['moderado'] + 1, ...array_filter(array_column($clientes, 'meses'), 'is_int')]);
+        $passo = 1;
+        foreach ([1, 2, 3, 6, 12, 24] as $candidato) {
+            $passo = $candidato;
+            if ($maior / $candidato <= 8) {
+                break;
+            }
+        }
+
+        $this->view('clientes/grafico', [
+            'clientes' => $clientes,
+            'total' => count($clientes),
+            'contagem' => $contagem,
+            'limites' => $limites,
+            'escalaMax' => (int) (ceil($maior / $passo) * $passo),
+            'escalaPasso' => $passo,
+        ]);
+    }
+
     public function updateLimites(): void
     {
         if (!Auth::isAdmin()) {

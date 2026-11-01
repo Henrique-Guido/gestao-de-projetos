@@ -102,6 +102,7 @@ $router->post('/ecommerce/{id}/reveal', [EcommerceController::class, 'reveal']);
 $router->post('/ecommerce/{id}/reveal-email', [EcommerceController::class, 'revealEmail']);
 
 $router->get('/clientes', [ClienteController::class, 'index']);
+$router->get('/clientes/grafico', [ClienteController::class, 'grafico']);
 $router->get('/clientes/{id}/edit', [ClienteController::class, 'edit']);
 // Antes de /clientes/{id}: o padrão {id} também casaria com "limites".
 $router->post('/clientes/limites', [ClienteController::class, 'updateLimites']);
