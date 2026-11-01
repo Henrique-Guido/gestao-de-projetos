@@ -12,7 +12,7 @@ class AuthController extends Controller
     public function showLogin(): void
     {
         if (Auth::check()) {
-            $this->redirect('/ftp');
+            $this->redirect('/clientes');
         }
 
         $this->view('auth/login', [], 'auth');
@@ -38,14 +38,14 @@ class AuthController extends Controller
             $this->redirect('/login');
         }
 
-        $this->redirect('/ftp');
+        $this->redirect('/clientes');
     }
 
     public function logout(): void
     {
         if (!Csrf::verify($this->input('_token'))) {
             Flash::set('error', 'Sessão expirada. Tente novamente.');
-            $this->redirect('/ftp');
+            $this->redirect('/clientes');
         }
 
         Auth::logout();
