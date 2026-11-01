@@ -167,7 +167,7 @@ h1, h2, h3, h4 { color: var(--text); font-weight: 600; margin: 0 0 .5rem; }
     height: 100vh;
     overflow: hidden;
     padding: 2rem 2.5rem;
-    max-width: 1200px;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     min-height: 0;
@@ -324,6 +324,7 @@ thead th {
     position: sticky;
     top: 0;
     z-index: 1;
+    white-space: nowrap;
 }
 
 tbody td {
@@ -350,13 +351,16 @@ tbody tr:hover { background: var(--hover); }
     overflow-wrap: anywhere;
 }
 
+/* A máscara nunca quebra; só a senha revelada (que pode ser longa) quebra linha. */
+.password-cell:has([data-revealed="false"]) .password-mask { white-space: nowrap; }
+
 /* Fica numa div dentro da <td>: com display: flex na própria célula, a borda da linha sai desalinhada. */
 .actions-cell { display: flex; align-items: center; gap: .4rem; }
 
 /* Textos longos (link, e-mail, usuário) ficam em uma linha e são cortados com reticências; o valor completo aparece no title. */
 .truncate-cell > * {
     display: block;
-    max-width: 160px;
+    max-width: 180px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
