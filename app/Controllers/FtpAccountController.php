@@ -33,7 +33,12 @@ class FtpAccountController extends Controller
     {
         $this->guardPermissao('pode_criar_clientes');
 
-        $this->view('ftp/create');
+        $origem = $this->origem($this->query('origem'));
+
+        $this->view('ftp/create', [
+            'origem' => $origem,
+            'voltar' => $origem === 'clientes' ? '/clientes' : '/ftp',
+        ]);
     }
 
     public function store(): void
@@ -41,11 +46,14 @@ class FtpAccountController extends Controller
         $this->guardPermissao('pode_criar_clientes');
         $this->guardCsrf();
 
+        $origem = $this->origem($this->input('origem'));
+        $deClientes = $origem === 'clientes';
+
         $errors = $this->validate();
 
         if ($errors) {
             Flash::set('error', implode(' ', $errors));
-            $this->redirect('/ftp/create');
+            $this->redirect('/ftp/create' . ($deClientes ? '?origem=clientes' : ''));
         }
 
         FtpAccount::create([
@@ -59,8 +67,8 @@ class FtpAccountController extends Controller
             'user_id' => Auth::id(),
         ]);
 
-        Flash::set('success', 'Acesso FTP cadastrado com sucesso.');
-        $this->redirect('/ftp');
+        Flash::set('success', $deClientes ? 'Cliente cadastrado com sucesso.' : 'Acesso FTP cadastrado com sucesso.');
+        $this->redirect($deClientes ? '/clientes' : '/ftp');
     }
 
     public function edit(string $id): void
@@ -213,6 +221,15 @@ class FtpAccountController extends Controller
          */
 
         return $errors;
+    }
+
+    /**
+     * Tela de onde o formulário de cadastro foi aberto: "clientes" (botão "+ Novo cliente")
+     * ou "ftp" (padrão). Define para onde o Cancelar e o Salvar levam.
+     */
+    private function origem(?string $valor): string
+    {
+        return $valor === 'clientes' ? 'clientes' : 'ftp';
     }
 
     private function guardCsrf(): void

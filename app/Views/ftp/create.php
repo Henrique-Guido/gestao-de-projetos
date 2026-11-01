@@ -6,6 +6,7 @@
 <div class="card" style="max-width: 520px;">
     <form method="POST" action="<?= $appUrl ?>/ftp">
         <?= Csrf::field() ?>
+        <input type="hidden" name="origem" value="<?= htmlspecialchars($origem) ?>">
         <div class="form-group">
             <label class="form-label" for="cliente">Cliente</label>
             <input type="text" id="cliente" name="cliente" class="form-control" required autofocus value="<?= htmlspecialchars($_POST['cliente'] ?? '') ?>">
@@ -37,7 +38,7 @@
         </div>
         <div style="display: flex; gap: .6rem;">
             <button type="submit" class="btn btn-primary">Salvar</button>
-            <a href="<?= $appUrl ?>/ftp" class="btn btn-outline">Cancelar</a>
+            <a href="<?= $appUrl . $voltar ?>" class="btn btn-outline">Cancelar</a>
         </div>
     </form>
 </div>

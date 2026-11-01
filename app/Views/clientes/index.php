@@ -31,7 +31,7 @@ $buildUrl = static function (string $status) use ($appUrl, $search): string {
             Ver gráfico
         </a>
         <?php if (Auth::can('pode_criar_clientes')): ?>
-            <a href="<?= $appUrl ?>/ftp/create" class="btn btn-primary">+ Novo cliente</a>
+            <a href="<?= $appUrl ?>/ftp/create?origem=clientes" class="btn btn-primary">+ Novo cliente</a>
         <?php endif; ?>
     </div>
 </div>
