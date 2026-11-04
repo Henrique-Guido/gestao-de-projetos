@@ -8,6 +8,12 @@ Options -Indexes
     RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
 
+# Nao indexar nada em buscadores, inclusive imagens, CSS e favicon (as paginas
+# PHP tambem enviam esse header pelo public/index.php).
+<IfModule mod_headers.c>
+    Header set X-Robots-Tag "noindex, nofollow, noarchive"
+</IfModule>
+
 # Bloqueia acesso direto a arquivos sensiveis na raiz do projeto.
 <FilesMatch "^(\.env|composer\.(json|lock))$">
     Require all denied
