@@ -154,13 +154,34 @@ class FtpAccount
         if (str_contains($host, '://')) {
             $hostname = parse_url($host, PHP_URL_HOST) ?: $host;
         }
+        $hostname = trim($hostname, '[]');
+
+        // Só conecta em IPs públicos: impede usar o teste para sondar a rede interna
+        // do servidor (127.0.0.1, 10.x, 192.168.x, 169.254.169.254...).
+        $ips = filter_var($hostname, FILTER_VALIDATE_IP) ? [$hostname] : (gethostbynamel($hostname) ?: []);
+
+        if ($ips === []) {
+            return ['ok' => false, 'message' => "O host \"{$hostname}\" não foi encontrado (DNS). Verifique o endereço."];
+        }
+
+        $flags = defined('FILTER_FLAG_GLOBAL_RANGE')
+            ? FILTER_FLAG_GLOBAL_RANGE
+            : FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE;
+
+        foreach ($ips as $ip) {
+            if (!filter_var($ip, FILTER_VALIDATE_IP, $flags)) {
+                return ['ok' => false, 'message' => 'O host aponta para uma rede interna e não pode ser testado.'];
+            }
+        }
 
         set_error_handler(function () {
             return true;
         });
 
         try {
-            $conn = ftp_connect($hostname, $porta, $timeout);
+            // Conecta no IP já validado (e não no nome), para que uma nova consulta DNS
+            // não troque o destino por um IP interno entre a checagem e a conexão.
+            $conn = ftp_connect($ips[0], $porta, $timeout);
 
             if (!$conn) {
                 return ['ok' => false, 'message' => "Não foi possível conectar ao host \"{$hostname}\" na porta {$porta}. Verifique o endereço e a porta."];

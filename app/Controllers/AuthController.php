@@ -6,6 +6,7 @@ use App\Core\Auth;
 use App\Core\Controller;
 use App\Core\Csrf;
 use App\Core\Flash;
+use App\Core\LoginThrottle;
 
 class AuthController extends Controller
 {
@@ -33,11 +34,24 @@ class AuthController extends Controller
             $this->redirect('/login');
         }
 
+        // REMOTE_ADDR é o IP real do visitante (não há proxy na frente). Headers como
+        // X-Forwarded-For não são usados porque o próprio atacante pode forjá-los.
+        $ip = (string) ($_SERVER['REMOTE_ADDR'] ?? '');
+
+        $espera = LoginThrottle::segundosBloqueado($name, $ip);
+        if ($espera > 0) {
+            $minutos = (int) ceil($espera / 60);
+            Flash::set('error', "Muitas tentativas de login. Tente novamente em {$minutos} minuto" . ($minutos > 1 ? 's' : '') . '.');
+            $this->redirect('/login');
+        }
+
         if (!Auth::attempt($name, $password)) {
+            LoginThrottle::registrarFalha($name, $ip);
             Flash::set('error', 'Nome ou senha inválidos.');
             $this->redirect('/login');
         }
 
+        LoginThrottle::registrarSucesso($name, $ip);
         $this->redirect('/clientes');
     }
 

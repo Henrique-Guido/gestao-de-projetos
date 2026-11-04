@@ -130,6 +130,12 @@ class UserController extends Controller
             'pode_editar_clientes' => $this->input('pode_editar_clientes') !== null,
         ]);
 
+        // Trocar a senha encerra as sessões abertas do usuário; quem trocou a própria
+        // senha continua logado nesta sessão.
+        if ($novaSenha !== '' && (int) $id === (int) Auth::id()) {
+            Auth::renovarImpressaoSenha();
+        }
+
         Flash::set('success', 'Usuário atualizado com sucesso.');
         $this->redirect('/usuarios');
     }

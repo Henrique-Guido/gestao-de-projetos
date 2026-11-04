@@ -24,6 +24,7 @@ class Auth
 
         session_regenerate_id(true);
         $_SESSION['user_id'] = $user['id'];
+        $_SESSION['senha_impressao'] = self::impressaoSenha($user['password']);
         self::$user = $user;
 
         return true;
@@ -32,8 +33,31 @@ class Auth
     public static function logout(): void
     {
         self::$user = null;
-        unset($_SESSION['user_id']);
+        unset($_SESSION['user_id'], $_SESSION['senha_impressao']);
         session_regenerate_id(true);
+    }
+
+    /**
+     * Após o próprio usuário logado trocar a senha: atualiza a impressão guardada na
+     * sessão para que ele continue logado (as demais sessões dele são encerradas).
+     */
+    public static function renovarImpressaoSenha(): void
+    {
+        $user = User::findById((int) self::id());
+
+        if ($user) {
+            $_SESSION['senha_impressao'] = self::impressaoSenha($user['password']);
+            self::$user = $user;
+        }
+    }
+
+    /**
+     * Identifica a senha atual sem guardá-la (nem o hash) na sessão. Se a senha mudar,
+     * o hash bcrypt muda e a impressão deixa de bater.
+     */
+    private static function impressaoSenha(string $hash): string
+    {
+        return hash('sha256', $hash);
     }
 
     public static function check(): bool
@@ -53,12 +77,18 @@ class Auth
         }
 
         if (self::$user === null) {
-            self::$user = User::findById(self::id());
+            $user = User::findById(self::id());
 
-            // Usuário removido do banco: encerra a sessão órfã.
-            if (self::$user === null) {
+            // Encerra a sessão se o usuário foi removido do banco ou se a senha foi
+            // trocada depois do login (inclui sessões antigas, sem impressão guardada).
+            $impressao = $_SESSION['senha_impressao'] ?? null;
+            if ($user === null || !is_string($impressao)
+                || !hash_equals(self::impressaoSenha($user['password']), $impressao)) {
                 self::logout();
+                return null;
             }
+
+            self::$user = $user;
         }
 
         return self::$user;
