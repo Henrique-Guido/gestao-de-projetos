@@ -22,7 +22,12 @@ class Env
             $value = trim($value, "\"'");
 
             $_ENV[$key] = $value;
-            putenv("$key=$value");
+
+            // Algumas hospedagens desabilitam putenv() via disable_functions;
+            // get() lê de $_ENV primeiro, então o putenv é só complementar.
+            if (function_exists('putenv')) {
+                putenv("$key=$value");
+            }
         }
 
         self::$loaded = true;
