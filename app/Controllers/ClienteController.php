@@ -23,16 +23,16 @@ class ClienteController extends Controller
     public function index(): void
     {
         $search = $this->query('q');
-        $statusValidos = ['ok', 'moderado', 'critico'];
+        $statusValidos = ['ok', 'pendente', 'moderado', 'critico'];
         $statusFiltro = in_array($this->query('status'), $statusValidos, true) ? $this->query('status') : '';
 
         $todos = FtpAccount::all($search ?: null);
 
-        $severidade = ['critico' => 0, 'moderado' => 1, 'ok' => 2];
+        $severidade = ['critico' => 0, 'moderado' => 1, 'pendente' => 2, 'ok' => 3];
         usort($todos, static fn (array $a, array $b) => $severidade[$a['status']] <=> $severidade[$b['status']]
             ?: $a['cliente'] <=> $b['cliente']);
 
-        $contagem = ['ok' => 0, 'moderado' => 0, 'critico' => 0];
+        $contagem = ['ok' => 0, 'pendente' => 0, 'moderado' => 0, 'critico' => 0];
         foreach ($todos as $cliente) {
             $contagem[$cliente['status']]++;
         }
@@ -56,7 +56,7 @@ class ClienteController extends Controller
         $clientes = FtpAccount::all();
         $limites = FtpAccount::limitesStatus();
 
-        $contagem = ['critico' => 0, 'moderado' => 0, 'ok' => 0];
+        $contagem = ['critico' => 0, 'moderado' => 0, 'pendente' => 0, 'ok' => 0];
         foreach ($clientes as &$cliente) {
             $cliente['meses'] = FtpAccount::mesesDesde($cliente['ultima_reuniao']);
             $contagem[$cliente['status']]++;

@@ -2,7 +2,7 @@
 use App\Core\Auth;
 use App\Core\Csrf;
 
-$labels = ['ok' => 'Ok', 'moderado' => 'Moderado', 'critico' => 'Crítico'];
+$labels = ['ok' => 'Ok', 'pendente' => 'Pendente', 'moderado' => 'Moderado', 'critico' => 'Crítico'];
 
 $formatarData = static function (?string $data): string {
     if (!$data) {
@@ -57,6 +57,9 @@ $buildUrl = static function (string $status) use ($appUrl, $search): string {
             <a class="filter-chip filter-chip--moderado<?= $statusFiltro === 'moderado' ? ' filter-chip--active' : '' ?>" href="<?= $buildUrl('moderado') ?>">
                 <span class="filter-chip__count"><?= $contagem['moderado'] ?></span> Moderado
             </a>
+            <a class="filter-chip filter-chip--pendente<?= $statusFiltro === 'pendente' ? ' filter-chip--active' : '' ?>" href="<?= $buildUrl('pendente') ?>">
+                <span class="filter-chip__count"><?= $contagem['pendente'] ?></span> Pendente
+            </a>
             <a class="filter-chip filter-chip--ok<?= $statusFiltro === 'ok' ? ' filter-chip--active' : '' ?>" href="<?= $buildUrl('ok') ?>">
                 <span class="filter-chip__count"><?= $contagem['ok'] ?></span> Ok
             </a>
@@ -65,7 +68,8 @@ $buildUrl = static function (string $status) use ($appUrl, $search): string {
 
     <div class="status-criterios">
         <p class="form-hint">
-            Critérios: <strong>Ok</strong> até <?= $meses($limites['ok']) ?> ·
+            Critérios: <strong>Pendente</strong> com próxima reunião marcada (hoje ou depois) ·
+            <strong>Ok</strong> até <?= $meses($limites['ok']) ?> ·
             <strong>Moderado</strong> até <?= $meses($limites['moderado']) ?> ·
             <strong>Crítico</strong> acima de <?= $meses($limites['moderado']) ?> ou sem reunião registrada.
         </p>

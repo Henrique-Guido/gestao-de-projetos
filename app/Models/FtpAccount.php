@@ -44,7 +44,7 @@ class FtpAccount
         $limites = self::limitesStatus();
 
         foreach ($accounts as &$account) {
-            $account['status'] = self::calcularStatus($account['ultima_reuniao'], $limites);
+            $account['status'] = self::calcularStatus($account['ultima_reuniao'], $account['proxima_reuniao'], $limites);
         }
 
         return $accounts;
@@ -60,7 +60,7 @@ class FtpAccount
             return null;
         }
 
-        $account['status'] = self::calcularStatus($account['ultima_reuniao']);
+        $account['status'] = self::calcularStatus($account['ultima_reuniao'], $account['proxima_reuniao']);
 
         return $account;
     }
@@ -212,12 +212,17 @@ class FtpAccount
     }
 
     /**
-     * Deriva o status a partir dos meses passados desde a última reunião:
+     * Com próxima reunião marcada (hoje ou depois), o status é "pendente".
+     * Fora isso, deriva o status a partir dos meses passados desde a última reunião:
      * até $limites['ok'] = ok, até $limites['moderado'] = moderado, acima disso = crítico
      * (padrão 2 e 4, ver limitesStatus()). Sem reunião registrada, o cliente é tratado como crítico.
      */
-    public static function calcularStatus(?string $ultimaReuniao, ?array $limites = null): string
+    public static function calcularStatus(?string $ultimaReuniao, ?string $proximaReuniao = null, ?array $limites = null): string
     {
+        if (self::temReuniaoMarcada($proximaReuniao)) {
+            return 'pendente';
+        }
+
         $limites ??= self::limitesStatus();
 
         $mesesPassados = self::mesesDesde($ultimaReuniao);
@@ -235,6 +240,14 @@ class FtpAccount
         }
 
         return 'critico';
+    }
+
+    /**
+     * Próxima reunião com data de hoje em diante. Uma data que já passou não conta como marcada.
+     */
+    public static function temReuniaoMarcada(?string $proximaReuniao): bool
+    {
+        return $proximaReuniao && new \DateTimeImmutable($proximaReuniao) >= new \DateTimeImmutable('today');
     }
 
     /**
