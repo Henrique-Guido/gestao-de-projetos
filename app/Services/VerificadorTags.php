@@ -2,13 +2,16 @@
 
 namespace App\Services;
 
+use App\Core\Rede;
+
 /**
  * Verifica se um site tem Google Tag Manager e Google Analytics instalados.
  *
  * Lê o HTML da página e, quando encontra contêineres do Google (GTM-… ou GT-…), baixa também o
  * JavaScript deles: o GA4 configurado dentro do Tag Manager não aparece no HTML do site.
  *
- * Como o endereço vem do cadastro, as requisições só vão para IPs públicos nas portas 80/443, com
+ * Como o endereço vem do cadastro, as requisições só vão para IPs públicos (ou de uma faixa interna
+ * liberada em REDES_INTERNAS_PERMITIDAS, ver Core\Rede) nas portas 80/443, com
  * o IP fixado após a validação e cada redirecionamento conferido, para que o recurso não sirva de
  * acesso à rede interna do servidor (SSRF).
  */
@@ -257,12 +260,8 @@ class VerificadorTags
             throw new \RuntimeException('O domínio não foi encontrado (DNS). Confira o endereço do site.');
         }
 
-        $flags = defined('FILTER_FLAG_GLOBAL_RANGE')
-            ? FILTER_FLAG_GLOBAL_RANGE
-            : FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE;
-
         foreach ($ips as $ip) {
-            if (!filter_var($ip, FILTER_VALIDATE_IP, $flags)) {
+            if (!Rede::ipPermitido($ip)) {
                 throw new \RuntimeException('O endereço aponta para uma rede interna e não pode ser verificado.');
             }
         }

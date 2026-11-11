@@ -60,6 +60,7 @@ padrões. O modelo versionado é o `.env.example`.
 | `APP_TIMEZONE` | Fuso horário (padrão `America/Sao_Paulo`). Afeta datas exibidas e o cálculo de status |
 | `APP_KEY` | Chave de 64 caracteres hex usada para cifrar as senhas guardadas (AES-256-GCM) |
 | `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` | Conexão com o banco |
+| `REDES_INTERNAS_PERMITIDAS` | Opcional. Faixas de IP privadas (CIDR, separadas por vírgula) que o teste de FTP e o "Verificar tags" podem acessar. Por segurança, esses recursos só conectam em IPs públicos; em hospedagens com DNS interno, os domínios hospedados lá resolvem para IPs privados de dentro do servidor e seriam bloqueados (na uni5: `10.19.0.0/16`). Localhost e 169.254.x nunca são liberados. Vazio = só IPs públicos |
 
 > **Atenção com a `APP_KEY`:** trocar a chave torna ilegíveis todas as senhas já
 > cadastradas. Guarde-a com segurança e use a mesma chave sempre que o banco for

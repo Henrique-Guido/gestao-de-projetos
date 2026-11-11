@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Core\Crypto;
 use App\Core\Database;
+use App\Core\Rede;
 
 class FtpAccount
 {
@@ -156,20 +157,16 @@ class FtpAccount
         }
         $hostname = trim($hostname, '[]');
 
-        // Só conecta em IPs públicos: impede usar o teste para sondar a rede interna
-        // do servidor (127.0.0.1, 10.x, 192.168.x, 169.254.169.254...).
+        // Só conecta em IPs públicos (ou numa faixa interna liberada, ver Core\Rede): impede usar
+        // o teste para sondar a rede interna do servidor (127.0.0.1, 10.x, 192.168.x, 169.254.169.254...).
         $ips = filter_var($hostname, FILTER_VALIDATE_IP) ? [$hostname] : (gethostbynamel($hostname) ?: []);
 
         if ($ips === []) {
             return ['ok' => false, 'message' => "O host \"{$hostname}\" não foi encontrado (DNS). Verifique o endereço."];
         }
 
-        $flags = defined('FILTER_FLAG_GLOBAL_RANGE')
-            ? FILTER_FLAG_GLOBAL_RANGE
-            : FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE;
-
         foreach ($ips as $ip) {
-            if (!filter_var($ip, FILTER_VALIDATE_IP, $flags)) {
+            if (!Rede::ipPermitido($ip)) {
                 return ['ok' => false, 'message' => 'O host aponta para uma rede interna e não pode ser testado.'];
             }
         }

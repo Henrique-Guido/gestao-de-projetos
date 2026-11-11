@@ -21,4 +21,11 @@ return [
         'username' => Env::get('DB_USERNAME', 'root'),
         'password' => Env::get('DB_PASSWORD', 'root'),
     ],
+    'rede' => [
+        // Faixas privadas (CIDR) que o teste de FTP e a verificação de tags podem acessar. Ver Core\Rede.
+        'internas_permitidas' => array_values(array_filter(array_map(
+            'trim',
+            explode(',', (string) Env::get('REDES_INTERNAS_PERMITIDAS', ''))
+        ))),
+    ],
 ];
