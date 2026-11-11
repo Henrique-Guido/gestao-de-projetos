@@ -14,10 +14,11 @@
     --hover: color-mix(in srgb, var(--primary) 12%, transparent);
     --shadow-lg: 0 12px 32px color-mix(in srgb, var(--aside-bg) 20%, transparent);
 
-    /* Status dos clientes (ok / moderado / crítico) */
+    /* Status dos clientes (ok / pendente / moderado / crítico) */
     --danger: #db4437;
     --warning: #ffb900;
     --success: #0f9d58;
+    --info: #4285f4;
 
     --radius: 10px;
 }
@@ -404,6 +405,7 @@ tbody tr:hover { background: var(--hover); }
 }
 
 .status-badge--ok { background: #e6f7ee; color: var(--success); }
+.status-badge--pendente { background: #e8f0fe; color: #1967d2; }
 .status-badge--moderado { background: #fff6dd; color: #a86b00; }
 
 .status-badge--critico {
@@ -426,6 +428,9 @@ tbody tr:hover { background: var(--hover); }
 .row-status td:first-child { border-left: 4px solid transparent; }
 
 .row-status--ok td:first-child { border-left-color: var(--success); }
+
+.row-status--pendente { background: rgba(66, 133, 244, 0.06); }
+.row-status--pendente td:first-child { border-left-color: var(--info); }
 
 .row-status--moderado { background: rgba(255, 185, 0, 0.06); }
 .row-status--moderado td:first-child { border-left-color: var(--warning); }
@@ -474,6 +479,7 @@ tbody tr:hover { background: var(--hover); }
 .filter-chip--critico { background: #fdecea; color: var(--danger); }
 .filter-chip--moderado { background: #fff6dd; color: #a86b00; }
 .filter-chip--ok { background: #e6f7ee; color: var(--success); }
+.filter-chip--pendente { background: #e8f0fe; color: #1967d2; }
 
 /* ---------- Critérios de status (legenda + ajuste) ---------- */
 .status-criterios { margin: -.5rem 0 1.25rem; }
@@ -704,6 +710,7 @@ tbody tr:hover { background: var(--hover); }
 
 /* Cor de cada marca (barra, segmento, amostra da legenda) vem do status. */
 .chart-fill--ok { --fill: var(--success); }
+.chart-fill--pendente { --fill: var(--info); }
 .chart-fill--moderado { --fill: var(--warning); }
 .chart-fill--critico { --fill: var(--danger); }
 

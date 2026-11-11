@@ -1,5 +1,5 @@
 <?php
-$labels = ['critico' => 'Crítico', 'moderado' => 'Moderado', 'ok' => 'Ok'];
+$labels = ['critico' => 'Crítico', 'moderado' => 'Moderado', 'pendente' => 'Pendente', 'ok' => 'Ok'];
 
 $formatarData = static function (?string $data): string {
     if (!$data) {
@@ -81,7 +81,8 @@ $resumoDistribuicao = implode(', ', array_map(
         <section class="card">
             <h2 class="chart-title">Meses desde a última reunião</h2>
             <p class="form-hint chart-subtitle">
-                Um cliente por linha, do mais atrasado ao mais recente. As linhas verticais marcam os limites de status.
+                Um cliente por linha, do mais atrasado ao mais recente. As linhas verticais marcam os limites de status;
+                clientes com próxima reunião marcada aparecem como Pendente, independente do tempo.
             </p>
 
             <ul class="chart-legend" aria-label="Legenda">
@@ -112,7 +113,7 @@ $resumoDistribuicao = implode(', ', array_map(
                         data-chart-tip
                         data-tip-value="<?= $texto ?>"
                         data-tip-label="<?= htmlspecialchars($cliente['cliente']) ?> · <?= $labels[$cliente['status']] ?>"
-                        data-tip-detail="Última reunião: <?= $formatarData($cliente['ultima_reuniao']) ?>"
+                        data-tip-detail="Última reunião: <?= $formatarData($cliente['ultima_reuniao']) ?><?= $cliente['status'] === 'pendente' ? ' · Próxima: ' . $formatarData($cliente['proxima_reuniao']) : '' ?>"
                         data-tip-status="<?= $cliente['status'] ?>">
                         <span class="bar-row__name" title="<?= htmlspecialchars($cliente['cliente']) ?>"><?= htmlspecialchars($cliente['cliente']) ?></span>
                         <span class="bar-row__plot" aria-hidden="true">
@@ -138,6 +139,7 @@ $resumoDistribuicao = implode(', ', array_map(
                                 <th>Cliente</th>
                                 <th>Última reunião</th>
                                 <th>Tempo desde a reunião</th>
+                                <th>Próxima reunião</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -147,6 +149,7 @@ $resumoDistribuicao = implode(', ', array_map(
                                     <td class="cliente-cell"><strong><?= htmlspecialchars($cliente['cliente']) ?></strong></td>
                                     <td><?= $formatarData($cliente['ultima_reuniao']) ?></td>
                                     <td><?= $meses($cliente['meses']) ?></td>
+                                    <td><?= $formatarData($cliente['proxima_reuniao']) ?></td>
                                     <td>
                                         <span class="status-badge status-badge--<?= $cliente['status'] ?>"><?= $labels[$cliente['status']] ?></span>
                                     </td>

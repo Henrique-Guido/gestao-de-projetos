@@ -17,6 +17,7 @@ class ExportController extends Controller
     /** Rótulo, cor de fundo e cor do texto de cada status (mesmas cores da tela de Clientes). */
     private const STATUS = [
         'ok' => ['Ok', 'E6F7EE', '0B7A44'],
+        'pendente' => ['Pendente', 'E8F0FE', '1967D2'],
         'moderado' => ['Moderado', 'FFF6DD', 'A86B00'],
         'critico' => ['Crítico', 'FDECEA', 'B3261E'],
     ];
@@ -52,7 +53,7 @@ class ExportController extends Controller
         $lojas = Ecommerce::all();
         $appName = (require dirname(__DIR__) . '/Config/config.php')['app']['name'];
 
-        $severidade = ['critico' => 0, 'moderado' => 1, 'ok' => 2];
+        $severidade = ['critico' => 0, 'moderado' => 1, 'pendente' => 2, 'ok' => 3];
         $porStatus = $clientes;
         usort($porStatus, static fn (array $a, array $b) => $severidade[$a['status']] <=> $severidade[$b['status']]
             ?: $a['cliente'] <=> $b['cliente']);
@@ -179,6 +180,7 @@ class ExportController extends Controller
 
         $linhas[] = [];
         $linhas[] = [$cabecalho('Status (aba Clientes)'), $cabecalho('Critério')];
+        $linhas[] = [$this->status('pendente') + ['borda' => true], ['valor' => 'Próxima reunião marcada (vale sobre os demais critérios)', 'borda' => true]];
         $linhas[] = [$this->status('ok') + ['borda' => true], ['valor' => "Última reunião há até {$limites['ok']} meses", 'borda' => true]];
         $linhas[] = [$this->status('moderado') + ['borda' => true], ['valor' => "Última reunião há até {$limites['moderado']} meses", 'borda' => true]];
         $linhas[] = [$this->status('critico') + ['borda' => true], ['valor' => "Mais de {$limites['moderado']} meses ou sem reunião", 'borda' => true]];
